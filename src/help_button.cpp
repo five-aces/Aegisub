@@ -36,28 +36,28 @@
 #include <algorithm>
 
 static const char *pages[][2] = {
-	{"Attachment Manager", "Attachment_Manager"},
-	{"Automation Manager", "Automation/Manager"},
-	{"Colour Picker", "Colour_Picker"},
-	{"Dummy Video", "Video#dummy-video"},
-	{"Export", "Exporting"},
-	{"Fonts Collector", "Fonts_Collector"},
-	{"Kanji Timer", "Kanji_Timer"},
-	{"Main", "Main_Page"},
-	{"Options", "Options"},
-	{"Paste Over", "Paste_Over"},
-	{"Properties", "Properties"},
-	{"Resample resolution", "Resolution_Resampler"},
-	{"Resolution mismatch", "Script_Resolution#automatic-resolution-change"},
-	{"Shift Times", "Shift_Times"},
-	{"Select Lines", "Select_Lines"},
-	{"Spell Checker", "Spell_Checker"},
-	{"Style Editor", "Styles"},
-	{"Styles Manager", "Styles"},
-	{"Styling Assistant", "Styling_Assistant"},
-	{"Timing Processor", "Timing_Post-Processor"},
-	{"Translation Assistant", "Translation_Assistant"},
-	{"Visual Typesetting", "Visual_Typesetting"},
+	{"Attachment Manager", "attachment_manager"},
+	{"Automation Manager", "automation/manager"},
+	{"Colour Picker", "colour_picker"},
+	{"Dummy Video", "video#dummy-video"},
+	{"Export", "exporting"},
+	{"Fonts Collector", "fonts_collector"},
+	{"Kanji Timer", "kanji_timer"},
+	{"Main", "main_page"},
+	{"Options", "options"},
+	{"Paste Over", "paste_over"},
+	{"Properties", "properties"},
+	{"Resample resolution", "resolution_resampler"},
+	{"Resolution mismatch", "script_resolution#automatic-resolution-change"},
+	{"Shift Times", "shift_times"},
+	{"Select Lines", "select_lines"},
+	{"Spell Checker", "spell_checker"},
+	{"Style Editor", "styles#the-style-editor"},
+	{"Styles Manager", "styles#the-styles-manager"},
+	{"Styling Assistant", "styling_assistant"},
+	{"Timing Processor", "timing_post-processor"},
+	{"Translation Assistant", "translation_assistant"},
+	{"Visual Typesetting", "visual_typesetting"},
 };
 
 namespace {
@@ -81,7 +81,7 @@ void HelpButton::OpenPage(const char *pageID) {
 	auto page = url(pageID);
 	auto sep = strchr(page, '#');
 	if (sep)
-		wxLaunchDefaultBrowser(fmt_wx("http://docs.aegisub.org/3.2/%.*s/%s", sep - page, page, sep));
+		wxLaunchDefaultBrowser(fmt_wx("https://aeg-dev.github.io/AegiSite/docs/3.2/%.*s/%s", sep - page, page, sep));
 	else
-		wxLaunchDefaultBrowser(fmt_wx("http://docs.aegisub.org/3.2/%s/", page));
+		wxLaunchDefaultBrowser(fmt_wx("https://aeg-dev.github.io/AegiSite/docs/3.2/%s/", page));
 }
