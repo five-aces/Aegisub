@@ -420,7 +420,7 @@ void SubsEditBox::OnCommit(int type) {
 	UpdateFields(type, true);
 }
 
-void SubsEditBox::UpdateFields(int type, bool repopulate_lists) {
+void SubsEditBox::UpdateFields(int type, bool repopulate_lists, bool inplace) {
 	if (!line) return;
 
 	if (type & AssFile::COMMIT_DIAG_TIME) {
@@ -432,7 +432,7 @@ void SubsEditBox::UpdateFields(int type, bool repopulate_lists) {
 	if (type & AssFile::COMMIT_DIAG_TEXT) {
 #ifdef WITH_WXSTC
 		if (use_stc) {
-			edit_ctrl_stc->SetTextTo(line->Text);
+			edit_ctrl_stc->SetTextTo(line->Text, inplace);
 		}
 		else {
 #endif
@@ -495,7 +495,7 @@ void SubsEditBox::OnActiveLineChanged(AssDialogue *new_line) {
 	line = new_line;
 	commit_id = -1;
 
-	UpdateFields(AssFile::COMMIT_DIAG_FULL, false);
+	UpdateFields(AssFile::COMMIT_DIAG_FULL, false, false);
 }
 
 void SubsEditBox::OnSelectedSetChanged() {

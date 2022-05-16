@@ -112,7 +112,7 @@ public:
 	SubsStyledTextEditCtrl(wxWindow* parent, wxSize size, long style, agi::Context *context);
 	~SubsStyledTextEditCtrl();
 
-	void SetTextTo(std::string const& text);
+    void SetTextTo(std::string const& text, bool inplace = true);
 	void Paste() override;
 
 	std::pair<int, int> GetBoundsOfWordAtPosition(int pos);

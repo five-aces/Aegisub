@@ -183,7 +183,7 @@ class SubsEditBox final : public wxPanel {
 	/// @param type AssFile::COMMITType
 	void OnCommit(int type);
 
-	void UpdateFields(int type, bool repopulate_lists);
+	void UpdateFields(int type, bool repopulate_lists, bool inplace = true);
 
 	/// Regenerate a dropdown list with the unique values of a dialogue field
 	void PopulateList(wxComboBox *combo, boost::flyweight<std::string> AssDialogue::*field);

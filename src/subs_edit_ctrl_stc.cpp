@@ -332,7 +332,7 @@ void SubsStyledTextEditCtrl::UpdateCallTip() {
 	CallTipSetHighlight(new_calltip.highlight_start, new_calltip.highlight_end);
 }
 
-void SubsStyledTextEditCtrl::SetTextTo(std::string const& text) {
+void SubsStyledTextEditCtrl::SetTextTo(std::string const& text, bool inplace) {
 	SetEvtHandlerEnabled(false);
 	Freeze();
 
@@ -345,14 +345,18 @@ void SubsStyledTextEditCtrl::SetTextTo(std::string const& text) {
 	if (context) {
 		context->textSelectionController->SetSelection(0, 0);
 		SetTextRaw(text.c_str());
-		auto pos = agi::IndexOfCharacter(text, old_pos);
-		context->textSelectionController->SetSelection(pos, pos);
+        if (inplace) {
+            auto pos = agi::IndexOfCharacter(text, old_pos);
+            context->textSelectionController->SetSelection(pos, pos);
+        }
 	}
 	else {
 		SetSelection(0, 0);
 		SetTextRaw(text.c_str());
-		auto pos = agi::IndexOfCharacter(text, old_pos);
-		SetSelection(pos, pos);
+        if (inplace) {
+            auto pos = agi::IndexOfCharacter(text, old_pos);
+            SetSelection(pos, pos);
+        }
 	}
 
 	SetEvtHandlerEnabled(true);
