@@ -70,6 +70,7 @@
         {},
         { "command" : "subtitle/find" },
         { "command" : "subtitle/find/next" },
+        { "command" : "subtitle/find/previous" },
         { "command" : "edit/find_replace" },
         { "command" : "subtitle/spellcheck" }
     ],

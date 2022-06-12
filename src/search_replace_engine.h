@@ -60,16 +60,19 @@ class SearchReplaceEngine {
 	SearchReplaceSettings settings;
 
 	bool FindReplace(bool replace);
+    bool FindPrev();
 	void Replace(AssDialogue *line, MatchState &ms);
 
 public:
 	bool FindNext() { return FindReplace(false); }
+    bool FindPrevious() { return FindPrev(); }
 	bool ReplaceNext() { return FindReplace(true); }
 	bool ReplaceAll();
 
 	void Configure(SearchReplaceSettings const& new_settings);
 
 	static std::function<MatchState (const AssDialogue*, size_t)> GetMatcher(SearchReplaceSettings const& settings);
+    static std::function<MatchState (const AssDialogue*, size_t)> GetBackMatcher(SearchReplaceSettings const& settings);
 
 	SearchReplaceEngine(agi::Context *c);
 };

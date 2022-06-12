@@ -167,6 +167,9 @@
 		"subtitle/find/next" : [
 			"Ctrl-G"
 		],
+        "subtitle/find/previous" : [
+            "Ctrl-Shift-G"
+        ],
 		"subtitle/new" : [
 			"Ctrl-N"
 		],

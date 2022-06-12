@@ -44,6 +44,7 @@ namespace agi { namespace util {
 	/// of the match might be different from the size of `needle`, since it's
 	/// based on the unfolded length.
 	std::pair<size_t, size_t> ifind(std::string const& haystack, std::string const& needle);
+    std::pair<size_t, size_t> ifind_back(std::string const& haystack, std::string const& needle);
 
 	class tagless_find_helper {
 		std::vector<std::pair<size_t, size_t>> blocks;

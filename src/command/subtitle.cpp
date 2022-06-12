@@ -114,6 +114,19 @@ struct subtitle_find_next final : public Command {
 	}
 };
 
+struct subtitle_find_previous final : public Command {
+    CMD_NAME("subtitle/find/previous")
+    STR_MENU("Find P&revious")
+    STR_DISP("Find Previous")
+    STR_HELP("Find previous match of last search")
+    
+    void operator()(agi::Context *c) override {
+        c->videoController->Stop();
+        if (!c->search->FindPrevious())
+            DialogSearchReplace::Show(c, false);
+    }
+};
+
 static void insert_subtitle_at_video(agi::Context *c, bool after) {
 	auto def = new AssDialogue;
 	int video_ms = c->videoController->TimeAtFrame(c->videoController->GetFrameN(), agi::vfr::START);
@@ -455,6 +468,7 @@ namespace cmd {
 		reg(agi::make_unique<subtitle_attachment>());
 		reg(agi::make_unique<subtitle_find>());
 		reg(agi::make_unique<subtitle_find_next>());
+        reg(agi::make_unique<subtitle_find_previous>());
 		reg(agi::make_unique<subtitle_insert_after>());
 		reg(agi::make_unique<subtitle_insert_after_videotime>());
 		reg(agi::make_unique<subtitle_insert_before>());
