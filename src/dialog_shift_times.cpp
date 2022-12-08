@@ -52,7 +52,7 @@ namespace {
 class DialogShiftTimes final : public wxDialog {
 	agi::Context *context;
 
-	agi::fs::path history_filename;
+	std::filesystem::path history_filename;
 	json::Array history;
 	agi::vfr::Framerate fps;
 	agi::signal::Connection timecodes_loaded_slot;
@@ -268,7 +268,7 @@ void DialogShiftTimes::OnSelectedSetChanged() {
 }
 
 void DialogShiftTimes::OnClear(wxCommandEvent &) {
-	agi::fs::Remove(history_filename);
+	std::filesystem::remove(history_filename);
 	history_box->Clear();
 	history.clear();
 }

@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-namespace agi { namespace signal {
+namespace agi::signal {
 class Connection;
 
 /// Implementation details; nothing outside this file should directly touch
@@ -207,7 +207,7 @@ inline std::vector<Connection> make_vector(std::initializer_list<UnscopedConnect
 	return std::vector<Connection>(std::begin(connections), std::end(connections));
 }
 
-} }
+}
 
 /// @brief Define functions which forward their arguments to the connect method
 ///        of the named signal

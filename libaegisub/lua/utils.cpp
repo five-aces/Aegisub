@@ -29,7 +29,7 @@
 #pragma warning(disable: 4645 4646)
 #endif
 
-namespace agi { namespace lua {
+namespace agi::lua {
 std::string get_string_or_default(lua_State *L, int idx) {
 	size_t len = 0;
 	const char *str = lua_tolstring(L, idx, &len);
@@ -260,5 +260,4 @@ void LuaStackcheck::dump() {
 }
 #endif
 
-}
 }

@@ -45,8 +45,7 @@ namespace {
 	}
 }
 
-namespace agi {
-	namespace acs {
+namespace agi::acs {
 
 /*
 This function is still a proof of concept, it's probably rife with bugs, below
@@ -54,7 +53,7 @@ is a short (and incomplete) todo
  * "Basic" checks (Read/Write/File/Dir) checks for FAT32 filesystems which
    requires detecting the filesystem being used.
 */
-void Check(fs::path const& file, acs::Type type) {
+void Check(std::filesystem::path const& file, acs::Type type) {
 	DWORD file_attr = GetFileAttributes(file.c_str());
 	if ((file_attr & INVALID_FILE_ATTRIBUTES) == INVALID_FILE_ATTRIBUTES) {
 		switch (GetLastError()) {
@@ -104,5 +103,4 @@ void Check(fs::path const& file, acs::Type type) {
 		throw fs::WriteDenied(file);
 }
 
-	} // namespace Access
-} // namespace agi
+} // namespace agi::acs

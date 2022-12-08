@@ -29,13 +29,13 @@
 
 using namespace agi;
 
-std::unique_ptr<AudioProvider> CreateAvisynthAudioProvider(fs::path const& filename, BackgroundRunner *);
-std::unique_ptr<AudioProvider> CreateFFmpegSourceAudioProvider(fs::path const& filename, BackgroundRunner *);
+std::unique_ptr<AudioProvider> CreateAvisynthAudioProvider(std::filesystem::path const& filename, BackgroundRunner *);
+std::unique_ptr<AudioProvider> CreateFFmpegSourceAudioProvider(std::filesystem::path const& filename, BackgroundRunner *);
 
 namespace {
 struct factory {
 	const char *name;
-	std::unique_ptr<AudioProvider> (*create)(fs::path const&, BackgroundRunner *);
+	std::unique_ptr<AudioProvider> (*create)(std::filesystem::path const&, BackgroundRunner *);
 	bool hidden;
 };
 
@@ -55,7 +55,7 @@ std::vector<std::string> GetAudioProviderNames() {
 	return ::GetClasses(boost::make_iterator_range(std::begin(providers), std::end(providers)));
 }
 
-std::unique_ptr<agi::AudioProvider> GetAudioProvider(fs::path const& filename,
+std::unique_ptr<agi::AudioProvider> GetAudioProvider(std::filesystem::path const& filename,
                                                      Path const& path_helper,
                                                      BackgroundRunner *br) {
 	auto preferred = OPT_GET("Audio/Provider")->GetString();

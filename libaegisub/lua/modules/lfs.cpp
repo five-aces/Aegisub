@@ -19,10 +19,10 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 using namespace agi::fs;
 using namespace agi::lua;
-namespace bfs = boost::filesystem;
 
 namespace agi {
 AGI_DEFINE_TYPE_NAME(DirectoryIterator);
@@ -47,7 +47,7 @@ auto wrap(char **err, Func f) -> decltype(f()) {
 }
 
 template<typename Ret>
-bool setter(const char *path, char **err, Ret (*f)(bfs::path const&)) {
+bool setter(const char *path, char **err, Ret (*f)(std::filesystem::path const&)) {
 	return wrap(err, [=]{
 		f(path);
 		return true;
@@ -55,21 +55,21 @@ bool setter(const char *path, char **err, Ret (*f)(bfs::path const&)) {
 }
 
 bool lfs_chdir(const char *dir, char **err) {
-	return setter(dir, err, &bfs::current_path);
+	return setter(dir, err, &std::filesystem::current_path);
 }
 
 char *currentdir(char **err) {
 	return wrap(err, []{
-		return strndup(bfs::current_path().string());
+		return strndup(std::filesystem::current_path().string());
 	});
 }
 
 bool mkdir(const char *dir, char **err) {
-	return setter(dir, err, &CreateDirectory);
+    return setter(dir, err, &std::filesystem::create_directories);
 }
 
 bool lfs_rmdir(const char *dir, char **err) {
-	return setter(dir, err, &Remove);
+	return setter(dir, err, &std::filesystem::remove);
 }
 
 bool touch(const char *path, char **err) {
@@ -101,16 +101,16 @@ DirectoryIterator *dir_new(const char *path, char **err) {
 
 const char *get_mode(const char *path, char **err) {
 	return wrap(err, [=]() -> const char * {
-		switch (bfs::status(path).type()) {
-			case bfs::file_not_found: return nullptr;         break;
-			case bfs::regular_file:   return "file";          break;
-			case bfs::directory_file: return "directory";     break;
-			case bfs::symlink_file:   return "link";          break;
-			case bfs::block_file:     return "block device";  break;
-			case bfs::character_file: return "char device";   break;
-			case bfs::fifo_file:      return "fifo";          break;
-			case bfs::socket_file:    return "socket";        break;
-			case bfs::reparse_file:   return "reparse point"; break;
+		switch (std::filesystem::status(path).type()) {
+            case std::filesystem::file_type::not_found: return nullptr;         break;
+            case std::filesystem::file_type::regular:   return "file";          break;
+            case std::filesystem::file_type::directory: return "directory";     break;
+            case std::filesystem::file_type::symlink:   return "link";          break;
+            case std::filesystem::file_type::block:     return "block device";  break;
+            case std::filesystem::file_type::character: return "char device";   break;
+            case std::filesystem::file_type::fifo:      return "fifo";          break;
+            case std::filesystem::file_type::socket:    return "socket";        break;
+            //case std::filesystem::file_type::reparse_file:   return "reparse point"; break;
 			default:                  return "other";         break;
 		}
 	});

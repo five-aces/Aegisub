@@ -23,6 +23,7 @@
 #include <memory>
 #include <set>
 #include <wx/event.h>
+#include <filesystem>
 
 class AssDialogue;
 class AssFile;
@@ -127,7 +128,7 @@ public:
 	/// @brief Constructor
 	/// @param videoFileName File to open
 	/// @param parent Event handler to send FrameReady events to
-	AsyncVideoProvider(agi::fs::path const& filename, std::string const& colormatrix, wxEvtHandler *parent, agi::BackgroundRunner *br);
+	AsyncVideoProvider(std::filesystem::path const& filename, std::string const& colormatrix, wxEvtHandler *parent, agi::BackgroundRunner *br);
 	~AsyncVideoProvider();
 };
 

@@ -22,12 +22,12 @@
 #ifdef WITH_HUNSPELL
 #include <libaegisub/spellchecker.h>
 
-#include <libaegisub/fs_fwd.h>
 #include <libaegisub/signal.h>
 
 #include <boost/filesystem/path.hpp>
 #include <memory>
 #include <set>
+#include <filesystem>
 
 namespace agi { namespace charset { class IconvWrapper; } }
 class Hunspell;
@@ -45,7 +45,7 @@ class HunspellSpellChecker final : public agi::SpellChecker {
 	std::vector<std::string> languages;
 
 	/// Path to user-local dictionary.
-	agi::fs::path userDicPath;
+	std::filesystem::path userDicPath;
 
 	/// Words in the custom user dictionary
 	std::set<std::string> customWords;

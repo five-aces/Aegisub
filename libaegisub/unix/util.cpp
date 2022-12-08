@@ -22,7 +22,7 @@
 #include <boost/thread.hpp>
 #endif
 
-namespace agi { namespace util {
+namespace agi::util {
 void SetThreadName(const char *) { }
 
 void sleep_for(int ms) {
@@ -33,4 +33,4 @@ void sleep_for(int ms) {
 #endif
 }
 
-} }
+}

@@ -20,7 +20,7 @@
 
 // Boost.locale doesn't support partial builds of ICU, so provide stub versions
 // of some of the things we don't use
-namespace boost { namespace locale {
+namespace boost::locale {
 namespace impl_icu {
 struct cdata {
 	icu::Locale locale;
@@ -66,4 +66,4 @@ message_format<char32_t> *create_messages_facet(messages_info const &info) {
 }
 #endif
 }
-} }
+}

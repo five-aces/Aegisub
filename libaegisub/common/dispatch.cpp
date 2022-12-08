@@ -77,7 +77,7 @@ namespace {
 	};
 }
 
-namespace agi { namespace dispatch {
+namespace agi::dispatch {
 
 void Init(std::function<void (Thunk)> invoke_main) {
 	static IOServiceThreadPool thread_pool;
@@ -142,4 +142,4 @@ std::unique_ptr<Queue> Create() {
 	return std::unique_ptr<Queue>(new SerialQueue);
 }
 
-} }
+}

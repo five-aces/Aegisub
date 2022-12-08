@@ -17,7 +17,6 @@
 #include "libaegisub/audio/provider.h"
 
 #include <libaegisub/log.h>
-#include <libaegisub/make_unique.h>
 
 #include <limits>
 
@@ -89,10 +88,10 @@ std::unique_ptr<AudioProvider> CreateConvertAudioProvider(std::unique_ptr<AudioP
 
 	// Some players don't like low sample rate audio
 	if (provider->GetSampleRate() < 32000) {
-		provider = agi::make_unique<ConvertAudioProvider>(std::move(provider));
+		provider = std::make_unique<ConvertAudioProvider>(std::move(provider));
 		while (provider->GetSampleRate() < 32000) {
 			LOG_D("audio_provider") << "Doubling sample rate";
-			provider = agi::make_unique<SampleDoublingAudioProvider>(std::move(provider));
+			provider = std::make_unique<SampleDoublingAudioProvider>(std::move(provider));
 		}
 	}
 

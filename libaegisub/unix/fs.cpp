@@ -18,22 +18,18 @@
 #include "libaegisub/fs.h"
 #include "libaegisub/io.h"
 
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <fcntl.h>
 #include <fnmatch.h>
 #include <istream>
 #include <sys/time.h>
 
-namespace bfs = boost::filesystem;
-
-namespace agi { namespace fs {
+namespace agi::fs {
 std::string ShortName(path const& p) {
 	return p.string();
 }
 
-void Touch(path const& file) {
-	CreateDirectory(file.parent_path());
+void Touch(std::filesystem::path const& file) {
+	std::filesystem::create_directories(file.parent_path());
 
 	int fd = open(file.c_str(), O_CREAT | O_APPEND | O_WRONLY, 0644);
 	if (fd >= 0) {
@@ -42,9 +38,9 @@ void Touch(path const& file) {
 	}
 }
 
-void Copy(fs::path const& from, fs::path const& to) {
+void Copy(std::filesystem::path const& from, std::filesystem::path const& to) {
 	acs::CheckFileRead(from);
-	CreateDirectory(to.parent_path());
+	std::filesystem::create_directories(to.parent_path());
 	acs::CheckDirWrite(to.parent_path());
 
 	auto in = io::Open(from, true);
@@ -53,22 +49,22 @@ void Copy(fs::path const& from, fs::path const& to) {
 
 struct DirectoryIterator::PrivData {
 	boost::system::error_code ec;
-	bfs::directory_iterator it;
+	std::filesystem::directory_iterator it;
 	std::string filter;
-	PrivData(path const& p, std::string const& filter) : it(p, ec), filter(filter) { }
+	PrivData(std::filesystem::path const& p, std::string const& filter) : it(p, ec), filter(filter) { }
 
 	bool bad() const {
 		return
-			it == bfs::directory_iterator() ||
+			it == std::filesystem::directory_iterator() ||
 			(!filter.empty() && fnmatch(filter.c_str(), it->path().filename().c_str(), 0));
 	}
 };
 
 DirectoryIterator::DirectoryIterator() { }
-DirectoryIterator::DirectoryIterator(path const& p, std::string const& filter)
+DirectoryIterator::DirectoryIterator(std::filesystem::path const& p, std::string const& filter)
 : privdata(new PrivData(p, filter))
 {
-	if (privdata->it == bfs::directory_iterator())
+	if (privdata->it == std::filesystem::directory_iterator())
 		privdata.reset();
 	else if (privdata->bad())
 		++*this;
@@ -86,7 +82,7 @@ DirectoryIterator& DirectoryIterator::operator++() {
 	++privdata->it;
 
 	while (privdata->bad()) {
-		if (privdata->it == bfs::directory_iterator()) {
+		if (privdata->it == std::filesystem::directory_iterator()) {
 			privdata.reset();
 			return *this;
 		}
@@ -100,4 +96,4 @@ DirectoryIterator& DirectoryIterator::operator++() {
 
 DirectoryIterator::~DirectoryIterator() { }
 
-} }
+}

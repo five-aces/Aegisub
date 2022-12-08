@@ -25,6 +25,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
+#include <string_view>
+
 namespace {
 std::vector<int> agi_keyframes(std::istream &file) {
 	double fps;
@@ -35,7 +37,7 @@ std::vector<int> agi_keyframes(std::istream &file) {
 	return std::vector<int>(agi::line_iterator<int>(file), agi::line_iterator<int>());
 }
 
-std::vector<int> other_keyframes(std::istream &file, char (*func)(std::string const&)) {
+std::vector<int> other_keyframes(std::istream &file, char (*func)(std::string_view)) {
 	int count = 0;
 	std::vector<int> ret;
 	agi::line_iterator<std::string> end;
@@ -49,11 +51,11 @@ std::vector<int> other_keyframes(std::istream &file, char (*func)(std::string co
 	return ret;
 }
 
-char xvid(std::string const& line) {
+char xvid(std::string_view line) {
 	return line.empty() ? 0 : line[0];
 }
 
-char divx(std::string const& line) {
+char divx(std::string_view line) {
 	char chrs[] = "IPB";
 	for (int i = 0; i < 3; ++i) {
 		std::string::size_type pos = line.find(chrs[i]);
@@ -63,15 +65,15 @@ char divx(std::string const& line) {
 	return 0;
 }
 
-char x264(std::string const& line) {
+char x264(std::string_view line) {
 	std::string::size_type pos = line.find("type:");
 	if (pos == line.npos || pos + 5 >= line.size()) return 0;
 	return line[pos + 5];
 }
 }
 
-namespace agi { namespace keyframe {
-void Save(agi::fs::path const& filename, std::vector<int> const& keyframes) {
+namespace agi::keyframe {
+void Save(std::filesystem::path const& filename, std::vector<int> const& keyframes) {
 	io::Save file(filename);
 	std::ostream& of = file.Get();
 	of << "# keyframe format v1" << std::endl;
@@ -79,7 +81,7 @@ void Save(agi::fs::path const& filename, std::vector<int> const& keyframes) {
 	boost::copy(keyframes, std::ostream_iterator<int>(of, "\n"));
 }
 
-std::vector<int> Load(agi::fs::path const& filename) {
+std::vector<int> Load(std::filesystem::path const& filename) {
 	auto file = io::Open(filename);
 	std::istream &is(*file);
 
@@ -96,4 +98,4 @@ std::vector<int> Load(agi::fs::path const& filename) {
 	throw Error("Unknown keyframe format");
 }
 
-} }
+}

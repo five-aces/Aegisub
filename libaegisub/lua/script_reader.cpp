@@ -24,14 +24,14 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <lauxlib.h>
 
-namespace agi { namespace lua {
-	bool LoadFile(lua_State *L, agi::fs::path const& raw_filename) {
+namespace agi::lua {
+	bool LoadFile(lua_State *L, std::filesystem::path const& raw_filename) {
 		auto filename = raw_filename;
 		try {
-			filename = agi::fs::Canonicalize(raw_filename);
+			filename = std::filesystem::canonical(raw_filename);
 		}
-		catch (agi::fs::FileSystemUnknownError const& e) {
-			LOG_E("auto4/lua") << "Error canonicalizing path: " << e.GetMessage();
+		catch (std::filesystem::filesystem_error const& e) {
+			LOG_E("auto4/lua") << "Error canonicalizing path: " << e.code().message();
 		}
 
 		agi::read_file_mapping file(filename);
@@ -89,15 +89,15 @@ namespace agi { namespace lua {
 
 			// If there's a .moon file at that path, load it instead of the
 			// .lua file
-			agi::fs::path path = filename;
+			std::filesystem::path path = filename;
 			if (agi::fs::HasExtension(path, "lua")) {
-				agi::fs::path moonpath = path;
+				std::filesystem::path moonpath = path;
 				moonpath.replace_extension("moon");
-				if (agi::fs::FileExists(moonpath))
+				if (std::filesystem::is_regular_file(moonpath))
 					path = moonpath;
 			}
 
-			if (!agi::fs::FileExists(path))
+			if (!std::filesystem::is_regular_file(path))
 				continue;
 
 			try {
@@ -119,7 +119,7 @@ namespace agi { namespace lua {
 		return lua_gettop(L) - pretop;
 	}
 
-	bool Install(lua_State *L, std::vector<fs::path> const& include_path) {
+	bool Install(lua_State *L, std::vector<std::filesystem::path> const& include_path) {
 		// set the module load path to include_path
 		lua_getglobal(L, "package");
 		push_value(L, "path");
@@ -154,4 +154,4 @@ namespace agi { namespace lua {
 
 		return true;
 	}
-} }
+}

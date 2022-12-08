@@ -25,7 +25,7 @@
 
 #include <boost/interprocess/streams/bufferstream.hpp>
 
-namespace agi { namespace json_util {
+namespace agi::json_util {
 
 json::UnknownElement parse(std::istream &stream) {
 	try {
@@ -41,9 +41,9 @@ json::UnknownElement parse(std::istream &stream) {
 	}
 }
 
-json::UnknownElement file(agi::fs::path const& file, std::pair<const char *, size_t> default_config) {
+json::UnknownElement file(std::filesystem::path const& file, std::pair<const char *, size_t> default_config) {
 	try {
-		if (fs::FileExists(file))
+		if (std::filesystem::is_regular_file(file))
 			return parse(*io::Open(file));
 	}
 	catch (fs::FileNotFound const&) {
@@ -59,4 +59,4 @@ json::UnknownElement file(agi::fs::path const& file, std::pair<const char *, siz
 	return parse(stream);
 }
 
-} }
+}

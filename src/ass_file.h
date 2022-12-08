@@ -36,6 +36,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <filesystem>
 
 class AssAttachment;
 class AssDialogue;
@@ -105,7 +106,7 @@ public:
 	/// @param style_catalog Style catalog name to fill styles from, blank to use default style
 	void LoadDefault(bool defline = true, std::string const& style_catalog = std::string());
 	/// Attach a file to the ass file
-	void InsertAttachment(agi::fs::path const& filename);
+	void InsertAttachment(std::filesystem::path const& filename);
 	/// Get the names of all of the styles available
 	std::vector<std::string> GetStyles() const;
 	/// @brief Get a style by name

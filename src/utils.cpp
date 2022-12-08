@@ -41,8 +41,9 @@
 #ifdef __UNIX__
 #include <unistd.h>
 #endif
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <map>
+#include <chrono>
 #include <unicode/locid.h>
 #include <unicode/unistr.h>
 #include <wx/clipbrd.h>
@@ -155,7 +156,7 @@ void SetClipboard(wxBitmap const& new_data) {
 	}
 }
 
-void CleanCache(agi::fs::path const& directory, std::string const& file_type, uint64_t max_size, uint64_t max_files) {
+void CleanCache(std::filesystem::path const& directory, std::string const& file_type, uint64_t max_size, uint64_t max_files) {
 	static std::unique_ptr<agi::dispatch::Queue> queue;
 	if (!queue)
 		queue = agi::dispatch::Create();
@@ -166,12 +167,12 @@ void CleanCache(agi::fs::path const& directory, std::string const& file_type, ui
 	queue->Async([=]{
 		LOG_D("utils/clean_cache") << "cleaning " << directory/file_type;
 		uint64_t total_size = 0;
-		using cache_item = std::pair<int64_t, agi::fs::path>;
+		using cache_item = std::pair<int64_t, std::filesystem::path>;
 		std::vector<cache_item> cachefiles;
 		for (auto const& file : agi::fs::DirectoryIterator(directory, file_type)) {
-			agi::fs::path path = directory/file;
-			cachefiles.push_back({agi::fs::ModifiedTime(path), path});
-			total_size += agi::fs::Size(path);
+			std::filesystem::path path = directory/file;
+            cachefiles.push_back({std::chrono::time_point_cast<std::chrono::seconds>(std::filesystem::last_write_time(path)).time_since_epoch().count(), path});
+			total_size += std::filesystem::file_size(path);
 		}
 
 		if (cachefiles.size() <= max_files && total_size <= max_size) {
@@ -190,9 +191,9 @@ void CleanCache(agi::fs::path const& directory, std::string const& file_type, ui
 			if ((total_size <= max_size && cachefiles.size() - deleted <= max_files) || cachefiles.size() - deleted < 2)
 				break;
 
-			uint64_t size = agi::fs::Size(i.second);
+			uint64_t size = std::filesystem::file_size(i.second);
 			try {
-				agi::fs::Remove(i.second);
+				std::filesystem::remove(i.second);
 				LOG_D("utils/clean_cache") << "deleted " << i.second;
 			}
 			catch  (agi::Exception const& e) {
@@ -250,21 +251,21 @@ wxString FontFace(std::string opt_prefix) {
 	return to_wx(value);
 }
 
-static agi::fs::path FileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, int flags, wxWindow *parent) {
+static std::filesystem::path FileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, int flags, wxWindow *parent) {
 	wxString path;
 	if (!option_name.empty())
 		path = to_wx(OPT_GET(option_name)->GetString());
-	agi::fs::path filename = wxFileSelector(message, path, to_wx(default_filename), to_wx(default_extension), to_wx(wildcard), flags, parent).wx_str();
+	std::filesystem::path filename = wxFileSelector(message, path, to_wx(default_filename), to_wx(default_extension), to_wx(wildcard), flags, parent).wx_str();
 	if (!filename.empty() && !option_name.empty())
 		OPT_SET(option_name)->SetString(filename.parent_path().string());
 	return filename;
 }
 
-agi::fs::path OpenFileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, wxWindow *parent) {
+std::filesystem::path OpenFileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, wxWindow *parent) {
 	return FileSelector(message, option_name, default_filename, default_extension, wildcard, wxFD_OPEN | wxFD_FILE_MUST_EXIST, parent);
 }
 
-agi::fs::path SaveFileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, wxWindow *parent) {
+std::filesystem::path SaveFileSelector(wxString const& message, std::string const& option_name, std::string const& default_filename, std::string const& default_extension, std::string const& wildcard, wxWindow *parent) {
 	return FileSelector(message, option_name, default_filename, default_extension, wildcard, wxFD_SAVE | wxFD_OVERWRITE_PROMPT, parent);
 }
 

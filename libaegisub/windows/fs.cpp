@@ -25,16 +25,13 @@
 using agi::charset::ConvertW;
 using agi::charset::ConvertLocal;
 
-#include <boost/filesystem.hpp>
-namespace bfs = boost::filesystem;
-
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 #undef CreateDirectory
 
-namespace agi { namespace fs {
-std::string ShortName(path const& p) {
+namespace agi::fs {
+std::string ShortName(std::filesystem::path const& p) {
 	std::wstring out(MAX_PATH + 1, 0);
 	DWORD len = GetShortPathName(p.c_str(), &out[0], out.size());
 	if (!len)
@@ -43,7 +40,7 @@ std::string ShortName(path const& p) {
 	return ConvertLocal(out);
 }
 
-void Touch(path const& file) {
+void Touch(std::filesystem::path const& file) {
 	CreateDirectory(file.parent_path());
 
 	SYSTEMTIME st;
@@ -59,7 +56,7 @@ void Touch(path const& file) {
 		throw EnvironmentError("SetFileTime failed with error: " + util::ErrorString(GetLastError()));
 }
 
-void Copy(fs::path const& from, fs::path const& to) {
+void Copy(std::filesystem::path const& from, std::filesystem::path const& to) {
 	acs::CheckFileRead(from);
 	CreateDirectory(to.parent_path());
 	acs::CheckDirWrite(to.parent_path());
@@ -81,7 +78,7 @@ struct DirectoryIterator::PrivData {
 };
 
 DirectoryIterator::DirectoryIterator() { }
-DirectoryIterator::DirectoryIterator(path const& p, std::string const& filter)
+DirectoryIterator::DirectoryIterator(std::filesystem::path const& p, std::string const& filter)
 : privdata(new PrivData)
 {
 	WIN32_FIND_DATA data;
@@ -113,4 +110,4 @@ DirectoryIterator& DirectoryIterator::operator++() {
 
 DirectoryIterator::~DirectoryIterator() { }
 
-} }
+}

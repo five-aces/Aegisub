@@ -30,7 +30,6 @@
 #include <libaegisub/format_path.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/path.h>
-#include <libaegisub/make_unique.h>
 
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -91,7 +90,7 @@ using color_str_pair = std::pair<int, wxString>;
 wxDEFINE_EVENT(EVT_ADD_TEXT, ValueEvent<color_str_pair>);
 wxDEFINE_EVENT(EVT_COLLECTION_DONE, wxThreadEvent);
 
-void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMode oper, wxEvtHandler *collector) {
+void FontsCollectorThread(AssFile *subs, std::filesystem::path const& destination, FcMode oper, wxEvtHandler *collector) {
 	agi::dispatch::Background().Async([=]{
 		auto AppendText = [&](wxString text, int colour) {
 			collector->AddPendingEvent(ValueEvent<color_str_pair>(EVT_ADD_TEXT, -1, {colour, text.Clone()}));
@@ -125,18 +124,18 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 		std::unique_ptr<wxZipOutputStream> zip;
 		if (oper == FcMode::CopyToZip) {
 			try {
-				agi::fs::CreateDirectory(destination.parent_path());
+				std::filesystem::create_directories(destination.parent_path());
 			}
-			catch (agi::fs::FileSystemError const& e) {
+			catch (std::filesystem::filesystem_error const& e) {
 				AppendText(fmt_tl("* Failed to create directory '%s': %s.\n",
-					destination.parent_path().wstring(), to_wx(e.GetMessage())), 2);
+					destination.parent_path().wstring(), to_wx(e.what())), 2);
 				collector->AddPendingEvent(wxThreadEvent(EVT_COLLECTION_DONE));
 				return;
 			}
 
-			out = agi::make_unique<wxFFileOutputStream>(destination.wstring());
+			out = std::make_unique<wxFFileOutputStream>(destination.wstring());
 			if (out->IsOk())
-				zip = agi::make_unique<wxZipOutputStream>(*out);
+				zip = std::make_unique<wxZipOutputStream>(*out);
 
 			if (!out->IsOk() || !zip || !zip->IsOk()) {
 				AppendText(fmt_tl("* Failed to open %s.\n", destination), 2);
@@ -151,14 +150,14 @@ void FontsCollectorThread(AssFile *subs, agi::fs::path const& destination, FcMod
 			path.make_preferred();
 
 			int ret = 0;
-			total_size += agi::fs::Size(path);
+			total_size += std::filesystem::file_size(path);
 
 			switch (oper) {
 				case FcMode::SymlinkToFolder:
 				case FcMode::CopyToScriptFolder:
 				case FcMode::CopyToFolder: {
 					auto dest = destination/path.filename();
-					if (agi::fs::FileExists(dest))
+					if (std::filesystem::is_regular_file(dest))
 						ret = 2;
 #ifndef _WIN32
 					else if (oper == FcMode::SymlinkToFolder) {
@@ -298,22 +297,22 @@ void DialogFontsCollector::OnStart(wxCommandEvent &) {
 	collection_log->ClearAll();
 	collection_log->SetReadOnly(true);
 
-	agi::fs::path dest;
+	std::filesystem::path dest;
 	if (mode != FcMode::CheckFontsOnly) {
 		dest = path.Decode(mode == FcMode::CopyToScriptFolder ? "?script/" : from_wx(dest_ctrl->GetValue()));
 
 		if (mode != FcMode::CopyToZip) {
-			if (agi::fs::FileExists(dest))
+			if (std::filesystem::is_regular_file(dest))
 				wxMessageBox(_("Invalid destination."), _("Error"), wxOK | wxICON_ERROR | wxCENTER, this);
 			try {
-				agi::fs::CreateDirectory(dest);
+				std::filesystem::create_directories(dest);
 			}
-			catch (agi::Exception const&) {
+			catch (std::filesystem::filesystem_error const&) {
 				wxMessageBox(_("Could not create destination folder."), _("Error"), wxOK | wxICON_ERROR | wxCENTER, this);
 				return;
 			}
 		}
-		else if (agi::fs::DirectoryExists(dest) || dest.filename().empty()) {
+		else if (std::filesystem::is_directory(dest) || dest.filename().empty()) {
 			wxMessageBox(_("Invalid path for .zip file."), _("Error"), wxOK | wxICON_ERROR | wxCENTER, this);
 			return;
 		}

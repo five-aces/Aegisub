@@ -19,6 +19,7 @@
 #include <libaegisub/option_value.h>
 
 #include <main.h>
+#include <filesystem>
 
 static const char default_mru[] = "{\"Video\" : []}";
 static const char conf_ok[] = "data/mru_ok.json";

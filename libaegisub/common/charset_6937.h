@@ -19,7 +19,7 @@
 #include <libaegisub/charset_conv.h>
 #include <memory>
 
-namespace agi { namespace charset {
+namespace agi::charset {
 
 /// @brief A charset converter for ISO-6937-2
 ///
@@ -42,4 +42,4 @@ public:
 	size_t Convert(const char** inbuf, size_t* inbytesleft, char** outbuf, size_t* outbytesleft);
 };
 
-} }
+}

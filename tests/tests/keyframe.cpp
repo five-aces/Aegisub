@@ -21,6 +21,7 @@
 
 #include <fstream>
 #include <iterator>
+#include <filesystem>
 
 #include <main.h>
 #include <util.h>

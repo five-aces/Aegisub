@@ -32,7 +32,7 @@ AssAttachment::AssAttachment(std::string const& header, AssEntryGroup group)
 {
 }
 
-AssAttachment::AssAttachment(agi::fs::path const& name, AssEntryGroup group)
+AssAttachment::AssAttachment(std::filesystem::path const& name, AssEntryGroup group)
 : filename(name.filename().string())
 , group(group)
 {
@@ -52,9 +52,9 @@ size_t AssAttachment::GetSize() const {
 	return entry_data.size() - header_end - 1;
 }
 
-void AssAttachment::Extract(agi::fs::path const& filename) const {
-	auto header_end = entry_data.find('\n');
-	auto decoded = agi::ass::UUDecode(entry_data.c_str() + header_end + 1, &entry_data.back() + 1);
+void AssAttachment::Extract(std::filesystem::path const& filename) const {
+	auto header_end = entry_data.get().find('\n');
+	auto decoded = agi::ass::UUDecode(entry_data.get().c_str() + header_end + 1, &entry_data.get().back() + 1);
 	agi::io::Save(filename, true).Get().write(&decoded[0], decoded.size());
 }
 

@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <type_traits>
+#include <filesystem>
 
 #include <boost/config.hpp>
 
@@ -28,7 +29,7 @@
 #define BOOST_NORETURN BOOST_ATTRIBUTE_NORETURN
 #endif
 
-namespace agi { namespace lua {
+namespace agi::lua {
 // Exception type for errors where the error details are on the lua stack
 struct error_tag {};
 
@@ -165,4 +166,4 @@ void lua_for_each(lua_State *L, Func&& func) {
 /// moonscript line rewriting support
 int add_stack_trace(lua_State *L);
 
-} }
+}

@@ -90,8 +90,8 @@ namespace ec = boost::system::errc;
 // sasuga windows.h
 #undef CreateDirectory
 
-namespace agi { namespace fs {
-namespace {
+namespace agi::fs {
+/*namespace {
 	WRAP_BFS(file_size, SizeImpl)
 	WRAP_BFS(space, Space)
 }
@@ -102,26 +102,30 @@ namespace {
 	WRAP_BFS(last_write_time, ModifiedTime)
 	WRAP_BFS(create_directories, CreateDirectory)
 	WRAP_BFS(remove, Remove)
-	WRAP_BFS(canonical, Canonicalize)
+	WRAP_BFS(canonical, Canonicalize)*/
 
-	uintmax_t Size(path const& p) {
-		if (DirectoryExists(p))
+    //std::time_t ModifiedTime(std::filesystem::path const& file_path) {
+    //    std::filesystem::file_time_type last_modified = std::filesystem::last_write_time(file_path);
+    //}
+
+	uintmax_t Size(std::filesystem::path const& p) {
+		if (std::filesystem::is_directory(p))
 			throw NotAFile(p);
-		return SizeImpl(p);
+		return file_size(p);
 	}
 
-	uintmax_t FreeSpace(path const& p) {
-		return Space(p).available;
+	uintmax_t FreeSpace(std::filesystem::path const& p) {
+		return space(p).available;
 	}
 
-	void Rename(const path& from, const path& to) {
-		CHECKED_CALL(bfs::rename(from, to, ec), from, to);
+	void Rename(const std::filesystem::path& from, const std::filesystem::path& to) {
+		CHECKED_CALL(std::filesystem::rename(from, to, ec), from, to);
 	}
 
-	bool HasExtension(path const& p, std::string const& ext) {
-		auto filename = p.filename().string();
+	bool HasExtension(std::filesystem::path const& p, std::string_view ext) {
+		std::string_view filename = p.filename().string();
 		if (filename.size() < ext.size() + 1) return false;
 		if (filename[filename.size() - ext.size() - 1] != '.') return false;
 		return boost::iends_with(filename, ext);
 	}
-} }
+}

@@ -60,7 +60,7 @@ int mru_index(const char *key) {
 }
 
 namespace agi {
-MRUManager::MRUManager(agi::fs::path const& config, std::pair<const char *, size_t> default_config, agi::Options *options)
+MRUManager::MRUManager(std::filesystem::path const& config, std::pair<const char *, size_t> default_config, agi::Options *options)
 : config_name(config)
 , options(options)
 {
@@ -78,7 +78,7 @@ MRUManager::MRUListMap &MRUManager::Find(const char *key) {
 	return mru[index];
 }
 
-void MRUManager::Add(const char *key, agi::fs::path const& entry) {
+void MRUManager::Add(const char *key, std::filesystem::path const& entry) {
 	MRUListMap &map = Find(key);
 	auto it = find(begin(map), end(map), entry);
 	if (it == begin(map) && it != end(map))
@@ -93,7 +93,7 @@ void MRUManager::Add(const char *key, agi::fs::path const& entry) {
 	Flush();
 }
 
-void MRUManager::Remove(const char *key, agi::fs::path const& entry) {
+void MRUManager::Remove(const char *key, std::filesystem::path const& entry) {
 	auto& map = Find(key);
 	map.erase(remove(begin(map), end(map), entry), end(map));
 	Flush();
@@ -103,7 +103,7 @@ const MRUManager::MRUListMap* MRUManager::Get(const char *key) {
 	return &Find(key);
 }
 
-agi::fs::path const& MRUManager::GetEntry(const char *key, const size_t entry) {
+std::filesystem::path const& MRUManager::GetEntry(const char *key, const size_t entry) {
 	const auto map = Get(key);
 	if (entry >= map->size())
 		throw MRUError("Requested element index is out of range.");

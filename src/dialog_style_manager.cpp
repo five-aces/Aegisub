@@ -46,7 +46,6 @@
 #include "subtitle_format.h"
 
 #include <libaegisub/fs.h>
-#include <libaegisub/make_unique.h>
 #include <libaegisub/path.h>
 #include <libaegisub/signal.h>
 #include <libaegisub/split.h>
@@ -335,7 +334,7 @@ DialogStyleManager::DialogStyleManager(agi::Context *context)
 	SetSizerAndFit(MainSizer);
 
 	// Position window
-	persist = agi::make_unique<PersistLocation>(this, "Tool/Style Manager");
+	persist = std::make_unique<PersistLocation>(this, "Tool/Style Manager");
 
 	// Populate lists
 	LoadCatalog();
@@ -443,7 +442,7 @@ void DialogStyleManager::LoadCatalog() {
 	// Create a default storage if there are none
 	if (CatalogList->IsListEmpty()) {
 		Store.LoadCatalog("Default");
-		Store.push_back(agi::make_unique<AssStyle>());
+		Store.push_back(std::make_unique<AssStyle>());
 		Store.Save();
 		CatalogList->Append("Default");
 	}
@@ -499,7 +498,7 @@ void DialogStyleManager::OnCatalogDelete() {
 	wxString message = fmt_tl("Are you sure you want to delete the storage \"%s\" from the catalog?", name);
 	int option = wxMessageBox(message, _("Confirm delete"), wxYES_NO | wxICON_EXCLAMATION , this);
 	if (option == wxYES) {
-		agi::fs::Remove(config::path->Decode("?user/catalog/" + from_wx(name) + ".sty"));
+		std::filesystem::remove(config::path->Decode("?user/catalog/" + from_wx(name) + ".sty"));
 		CatalogList->Delete(CatalogList->GetSelection());
 		CatalogList->SetSelection(0);
 		OnChangeCatalog();
@@ -521,7 +520,7 @@ void DialogStyleManager::OnCopyToStorage() {
 			}
 		}
 		else {
-			Store.push_back(agi::make_unique<AssStyle>(*styleMap.at(selections[i])));
+			Store.push_back(std::make_unique<AssStyle>(*styleMap.at(selections[i])));
 			copied.push_back(styleName);
 		}
 	}

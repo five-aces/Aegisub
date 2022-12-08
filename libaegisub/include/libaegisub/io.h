@@ -17,31 +17,28 @@
 /// @ingroup libaegisub
 
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 
-#include <boost/filesystem/path.hpp>
 #include <iosfwd>
 #include <memory>
+#include <filesystem>
 
-namespace agi {
-	namespace io {
+namespace agi::io {
 
 DEFINE_EXCEPTION(IOError, Exception);
 DEFINE_EXCEPTION(IOFatal, IOError);
 
-std::unique_ptr<std::istream> Open(fs::path const& file, bool binary = false);
+std::unique_ptr<std::istream> Open(std::filesystem::path const& file, bool binary = false);
 
 class Save {
 	std::unique_ptr<std::ostream> fp;
-	const fs::path file_name;
-	const fs::path tmp_name;
+	const std::filesystem::path file_name;
+	const std::filesystem::path tmp_name;
 
 public:
-	Save(fs::path const& file, bool binary = false);
+	Save(std::filesystem::path const& file, bool binary = false);
 	~Save();
 	std::ostream& Get() { return *fp; }
 	void Close();
 };
 
-	} // namespace io
-} // namespace agi
+} // namespace agi::io

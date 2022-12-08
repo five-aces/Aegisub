@@ -21,6 +21,7 @@
 
 #include <atomic>
 #include <vector>
+#include <filesystem>
 
 namespace agi {
 class AudioProvider {
@@ -85,13 +86,13 @@ DEFINE_EXCEPTION(AudioDataNotFound, AudioProviderError);
 
 class BackgroundRunner;
 
-std::unique_ptr<AudioProvider> CreateDummyAudioProvider(fs::path const& filename, BackgroundRunner *);
-std::unique_ptr<AudioProvider> CreatePCMAudioProvider(fs::path const& filename, BackgroundRunner *);
+std::unique_ptr<AudioProvider> CreateDummyAudioProvider(std::filesystem::path const& filename, BackgroundRunner *);
+std::unique_ptr<AudioProvider> CreatePCMAudioProvider(std::filesystem::path const& filename, BackgroundRunner *);
 
 std::unique_ptr<AudioProvider> CreateConvertAudioProvider(std::unique_ptr<AudioProvider> source_provider);
 std::unique_ptr<AudioProvider> CreateLockAudioProvider(std::unique_ptr<AudioProvider> source_provider);
-std::unique_ptr<AudioProvider> CreateHDAudioProvider(std::unique_ptr<AudioProvider> source_provider, fs::path const& dir);
+std::unique_ptr<AudioProvider> CreateHDAudioProvider(std::unique_ptr<AudioProvider> source_provider, std::filesystem::path const& dir);
 std::unique_ptr<AudioProvider> CreateRAMAudioProvider(std::unique_ptr<AudioProvider> source_provider);
 
-void SaveAudioClip(AudioProvider const& provider, fs::path const& path, int start_time, int end_time);
+void SaveAudioClip(AudioProvider const& provider, std::filesystem::path const& path, int start_time, int end_time);
 }

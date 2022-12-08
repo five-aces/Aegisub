@@ -165,7 +165,7 @@ void SubsController::SetSelectionController(SelectionController *selection_contr
 	selection_connection = context->selectionController->AddSelectionListener(&SubsController::OnSelectionChanged, this);
 }
 
-ProjectProperties SubsController::Load(agi::fs::path const& filename, std::string charset) {
+ProjectProperties SubsController::Load(std::filesystem::path const& filename, std::string charset) {
 	AssFile temp;
 
 	SubtitleFormat::GetReader(filename, charset)->ReadFile(&temp, filename, context->project->Timecodes(), charset);
@@ -184,12 +184,12 @@ ProjectProperties SubsController::Load(agi::fs::path const& filename, std::strin
 	// Save backup of file
 	if (CanSave() && OPT_GET("App/Auto/Backup")->GetBool()) {
 		auto path_str = OPT_GET("Path/Auto/Backup")->GetString();
-		agi::fs::path path;
+		std::filesystem::path path;
 		if (path_str.empty())
 			path = filename.parent_path();
 		else
 			path = context->path->Decode(path_str);
-		agi::fs::CreateDirectory(path);
+        std::filesystem::create_directories(path);
 		agi::fs::Copy(filename, path/(filename.stem().string() + ".ORIGINAL" + filename.extension().string()));
 	}
 
@@ -197,7 +197,7 @@ ProjectProperties SubsController::Load(agi::fs::path const& filename, std::strin
 	return props;
 }
 
-void SubsController::Save(agi::fs::path const& filename, std::string const& encoding) {
+void SubsController::Save(std::filesystem::path const& filename, std::string const& encoding) {
 	const SubtitleFormat *writer = SubtitleFormat::GetWriter(filename);
 	if (!writer)
 		throw agi::InvalidInputException("Unknown file type.");
@@ -272,7 +272,7 @@ void SubsController::AutoSave() {
 		std::unique_ptr<AssFile> subs(subs_copy);
 
 		try {
-			agi::fs::CreateDirectory(directory);
+			std::filesystem::create_directories(directory);
 			auto path = directory /  agi::format("%s.%s.AUTOSAVE.ass", name.string(),
 			                                     agi::util::strftime("%Y-%m-%d-%H-%M-%S"));
 			SubtitleFormat::GetWriter(path)->WriteFile(subs.get(), path, 0);
@@ -300,7 +300,7 @@ bool SubsController::CanSave() const {
 	}
 }
 
-void SubsController::SetFileName(agi::fs::path const& path) {
+void SubsController::SetFileName(std::filesystem::path const& path) {
 	filename = path;
 	context->path->SetToken("?script", path.parent_path());
 	config::mru->Add("Subtitle", path);
@@ -396,7 +396,7 @@ wxString SubsController::GetRedoDescription() const {
 	return IsRedoStackEmpty() ? "" : redo_stack.back().undo_description;
 }
 
-agi::fs::path SubsController::Filename() const {
+std::filesystem::path SubsController::Filename() const {
 	if (!filename.empty()) return filename;
 
 	// Apple HIG says "untitled" should not be capitalised

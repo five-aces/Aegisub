@@ -21,8 +21,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-namespace agi {
-	namespace util {
+namespace agi::util {
 
 using agi::charset::ConvertW;
 
@@ -65,5 +64,4 @@ void sleep_for(int ms) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-	} // namespace io
-} // namespace agi
+} // namespace agi::util

@@ -27,9 +27,9 @@
 #include <libaegisub/format.h>
 #include <libaegisub/fs.h>
 #include <libaegisub/log.h>
-#include <libaegisub/make_unique.h>
 #include <libaegisub/path.h>
 #include <libaegisub/thesaurus.h>
+#include <filesystem>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/range/algorithm.hpp>
@@ -75,10 +75,10 @@ std::vector<std::string> Thesaurus::GetLanguageList() const {
 	return languages;
 }
 
-static bool check_path(agi::fs::path const& path, std::string const& language, agi::fs::path& idx, agi::fs::path& dat) {
+static bool check_path(std::filesystem::path const& path, std::string const& language, std::filesystem::path& idx, std::filesystem::path& dat) {
 	idx = path/agi::format("th_%s.idx", language);
 	dat = path/agi::format("th_%s.dat", language);
-	return agi::fs::FileExists(idx) && agi::fs::FileExists(dat);
+	return std::filesystem::is_regular_file(idx) && std::filesystem::is_regular_file(dat);
 }
 
 void Thesaurus::OnLanguageChanged() {
@@ -87,7 +87,7 @@ void Thesaurus::OnLanguageChanged() {
 	auto language = OPT_GET("Tool/Thesaurus/Language")->GetString();
 	if (language.empty()) return;
 
-	agi::fs::path idx, dat;
+	std::filesystem::path idx, dat;
 
 	auto path = config::path->Decode(OPT_GET("Path/Dictionary")->GetString() + "/");
 	if (!check_path(path, language, idx, dat)) {
@@ -103,7 +103,7 @@ void Thesaurus::OnLanguageChanged() {
 	auto cancel = cancel_load; // Needed to avoid capturing via `this`
 	agi::dispatch::Background().Async([=]{
 		try {
-			auto thes = agi::make_unique<agi::Thesaurus>(dat, idx);
+			auto thes = std::make_unique<agi::Thesaurus>(dat, idx);
 			agi::dispatch::Main().Sync([&thes, cancel, this]{
 				if (!*cancel) {
 					impl = std::move(thes);

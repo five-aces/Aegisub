@@ -17,11 +17,10 @@
 #include "libaegisub/audio/provider.h"
 
 #include "libaegisub/file_mapping.h"
-#include "libaegisub/fs.h"
-#include "libaegisub/make_unique.h"
 
 #include <array>
 #include <vector>
+#include <memory>
 
 namespace {
 using namespace agi;
@@ -63,7 +62,7 @@ protected:
 	mutable read_file_mapping file;
 	uint64_t file_pos = 0;
 
-	PCMAudioProvider(fs::path const& filename) : file(filename) { }
+	PCMAudioProvider(std::filesystem::path const& filename) : file(filename) { }
 
 	template<typename T, typename UInt>
 	T Read(UInt *data_left) {
@@ -148,7 +147,7 @@ struct Wave64 {
 template<typename Impl>
 class WavPCMAudioProvider : public PCMAudioProvider {
 public:
-	WavPCMAudioProvider(fs::path const& filename)
+	WavPCMAudioProvider(std::filesystem::path const& filename)
 	: PCMAudioProvider(filename)
 	{
 		using DataSize = typename Impl::DataSize;
@@ -214,12 +213,12 @@ public:
 }
 
 namespace agi {
-std::unique_ptr<AudioProvider> CreatePCMAudioProvider(fs::path const& filename, BackgroundRunner *) {
+std::unique_ptr<AudioProvider> CreatePCMAudioProvider(std::filesystem::path const& filename, BackgroundRunner *) {
 	bool wrong_file_type = true;
 	std::string msg;
 
 	try {
-		return make_unique<WavPCMAudioProvider<RiffWav>>(filename);
+		return std::make_unique<WavPCMAudioProvider<RiffWav>>(filename);
 	}
 	catch (AudioDataNotFound const& err) {
 		msg = "RIFF PCM WAV audio provider: " + err.GetMessage();
@@ -230,7 +229,7 @@ std::unique_ptr<AudioProvider> CreatePCMAudioProvider(fs::path const& filename, 
 	}
 
 	try {
-		return make_unique<WavPCMAudioProvider<Wave64>>(filename);
+		return std::make_unique<WavPCMAudioProvider<Wave64>>(filename);
 	}
 	catch (AudioDataNotFound const& err) {
 		msg += "\nWave64 audio provider: " + err.GetMessage();

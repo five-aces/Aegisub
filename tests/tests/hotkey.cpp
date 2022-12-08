@@ -18,6 +18,7 @@
 #include <libaegisub/hotkey.h>
 
 #include <fstream>
+#include <filesystem>
 
 using namespace agi::hotkey;
 
@@ -160,7 +161,7 @@ static void insert_combo(Hotkey::HotkeyMap &hm, const char *ctx, const char *cmd
 }
 
 TEST(lagi_hotkey, set_hotkey_map) {
-	agi::fs::Remove("data/hotkey_tmp");
+    std::filesystem::remove("data/hotkey_tmp");
 	{
 		Hotkey h("data/hotkey_tmp", "{}");
 
@@ -217,5 +218,5 @@ TEST(lagi_hotkey,  old_format_is_backed_up_before_migrating) {
 		ASSERT_TRUE(memcmp(buff, simple_valid, sizeof(buff)) == 0);
 	}
 
-	agi::fs::Remove("data/hotkey_tmp.3_1");
+    std::filesystem::remove("data/hotkey_tmp.3_1");
 }

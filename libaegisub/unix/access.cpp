@@ -24,12 +24,9 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <boost/filesystem/path.hpp>
+namespace agi::acs {
 
-namespace agi {
-	namespace acs {
-
-void Check(agi::fs::path const& file, acs::Type type) {
+void Check(std::filesystem::path const& file, acs::Type type) {
 	struct stat file_stat;
 
 	int file_status = stat(file.c_str(), &file_stat);
@@ -70,5 +67,4 @@ void Check(agi::fs::path const& file, acs::Type type) {
 	}
 }
 
-	} // namespace acs
-} // namespace agi
+} // namespace agi::acs

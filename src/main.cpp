@@ -61,7 +61,6 @@
 #include <libaegisub/fs.h>
 #include <libaegisub/io.h>
 #include <libaegisub/log.h>
-#include <libaegisub/make_unique.h>
 #include <libaegisub/path.h>
 #include <libaegisub/util.h>
 
@@ -166,7 +165,7 @@ bool AegisubApp::OnInit() {
 
 	agi::log::log = new agi::log::LogSink;
 #ifdef _DEBUG
-	agi::log::log->Subscribe(agi::make_unique<agi::log::EmitSTDOUT>());
+	agi::log::log->Subscribe(std::make_unique<agi::log::EmitSTDOUT>());
 #endif
 
 	// Set config file
@@ -190,8 +189,8 @@ bool AegisubApp::OnInit() {
 
 	StartupLog("Create log writer");
 	auto path_log = config::path->Decode("?user/log/");
-	agi::fs::CreateDirectory(path_log);
-	agi::log::log->Subscribe(agi::make_unique<agi::log::JsonEmitter>(path_log));
+	std::filesystem::create_directories(path_log);
+	agi::log::log->Subscribe(std::make_unique<agi::log::JsonEmitter>(path_log));
 	CleanCache(path_log, "*.json", 10, 100);
 
 	StartupLog("Load user configuration");
@@ -275,7 +274,7 @@ bool AegisubApp::OnInit() {
 		exception_message = _("Oops, Aegisub has crashed!\n\nAn attempt has been made to save a copy of your file to:\n\n%s\n\nAegisub will now close.");
 
 		// Load plugins
-		Automation4::ScriptFactory::Register(agi::make_unique<Automation4::LuaScriptFactory>());
+		Automation4::ScriptFactory::Register(std::make_unique<Automation4::LuaScriptFactory>());
 		libass::CacheFonts();
 
 		// Load Automation scripts
@@ -284,8 +283,8 @@ bool AegisubApp::OnInit() {
 
 		// Load export filters
 		StartupLog("Register export filters");
-		AssExportFilterChain::Register(agi::make_unique<AssFixStylesFilter>());
-		AssExportFilterChain::Register(agi::make_unique<AssTransformFramerateFilter>());
+		AssExportFilterChain::Register(std::make_unique<AssFixStylesFilter>());
+		AssExportFilterChain::Register(std::make_unique<AssTransformFramerateFilter>());
 
 		StartupLog("Install PNG handler");
 		wxImage::AddHandler(new wxPNGHandler);
@@ -395,13 +394,13 @@ void AegisubApp::CloseAll() {
 void AegisubApp::UnhandledException(bool stackWalk) {
 #if (!defined(_DEBUG) || defined(WITH_EXCEPTIONS)) && (wxUSE_ON_FATAL_EXCEPTION+0)
 	bool any = false;
-	agi::fs::path path;
+	std::filesystem::path path;
 	for (auto& frame : frames) {
 		auto c = frame->context.get();
 		if (!c || !c->ass || !c->subsController) continue;
 
 		path = config::path->Decode("?user/recovered");
-		agi::fs::CreateDirectory(path);
+		std::filesystem::create_directories(path);
 
 		auto filename = c->subsController->Filename().stem();
 		filename.replace_extension(agi::format("%s.ass", agi::util::strftime("%Y-%m-%d-%H-%M-%S")));
@@ -478,7 +477,7 @@ void AegisubApp::MacOpenFiles(wxArrayString const& filenames) {
 }
 
 void AegisubApp::OpenFiles(wxArrayStringsAdapter filenames) {
-	std::vector<agi::fs::path> files;
+	std::vector<std::filesystem::path> files;
 	for (size_t i = 0; i < filenames.GetCount(); ++i)
 		files.push_back(from_wx(filenames[i]));
 	if (!files.empty())

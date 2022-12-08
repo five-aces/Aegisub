@@ -137,8 +137,7 @@ public:
 };
 }
 
-namespace agi {
-namespace ass {
+namespace agi::ass {
 
 std::vector<DialogueToken> SyntaxHighlight(std::string const& text, std::vector<DialogueToken> const& tokens, SpellChecker *spellchecker) {
 	return SyntaxHighlighter(text, spellchecker).Highlight(tokens);
@@ -214,5 +213,4 @@ void SplitWords(std::string const& str, std::vector<DialogueToken> &tokens) {
 	WordSplitter(str, tokens).SplitWords();
 }
 
-}
 }

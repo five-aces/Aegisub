@@ -41,7 +41,6 @@
 #include <libaegisub/fs.h>
 #include <libaegisub/io.h>
 #include <libaegisub/line_iterator.h>
-#include <libaegisub/make_unique.h>
 #include <libaegisub/path.h>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -53,7 +52,7 @@ void AssStyleStorage::push_back(std::unique_ptr<AssStyle> new_style) { style.emp
 void AssStyleStorage::Save() const {
 	if (file.empty()) return;
 
-	agi::fs::CreateDirectory(file.parent_path());
+	std::filesystem::create_directories(file.parent_path());
 
 	agi::io::Save out(file);
 	out.Get() << "\xEF\xBB\xBF";
@@ -62,7 +61,7 @@ void AssStyleStorage::Save() const {
 		out.Get() << cur->GetEntryData() << std::endl;
 }
 
-void AssStyleStorage::Load(agi::fs::path const& filename) {
+void AssStyleStorage::Load(std::filesystem::path const& filename) {
 	file = filename;
 	clear();
 
@@ -70,7 +69,7 @@ void AssStyleStorage::Load(agi::fs::path const& filename) {
 		auto in = agi::io::Open(file);
 		for (auto const& line : agi::line_iterator<std::string>(*in)) {
 			try {
-				style.emplace_back(agi::make_unique<AssStyle>(line));
+				style.emplace_back(std::make_unique<AssStyle>(line));
 			} catch(...) {
 				/* just ignore invalid lines for now */
 			}
@@ -108,14 +107,14 @@ AssStyle *AssStyleStorage::GetStyle(std::string const& name) {
 std::vector<std::string> AssStyleStorage::GetCatalogs() {
 	std::vector<std::string> catalogs;
 	for (auto const& file : agi::fs::DirectoryIterator(config::path->Decode("?user/catalog/"), "*.sty"))
-		catalogs.push_back(agi::fs::path(file).stem().string());
+		catalogs.push_back(std::filesystem::path(file).stem().string());
 	return catalogs;
 }
 
 bool AssStyleStorage::CatalogExists(std::string const& catalogname) {
 	if (catalogname.empty()) return false;
 	auto filename = config::path->Decode("?user/catalog/" + catalogname + ".sty");
-	return agi::fs::FileExists(filename);
+	return std::filesystem::is_regular_file(filename);
 }
 
 void AssStyleStorage::ReplaceIntoFile(AssFile &file) {

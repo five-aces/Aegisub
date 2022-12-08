@@ -39,7 +39,7 @@
 
 #include <libaegisub/format.h>
 
-std::string inline_string_encode(const std::string &input) {
+std::string inline_string_encode(std::string_view input) {
 	std::string output;
 	output.reserve(input.size());
 	for (char c : input) {
@@ -51,14 +51,14 @@ std::string inline_string_encode(const std::string &input) {
 	return output;
 }
 
-std::string inline_string_decode(const std::string &input) {
+std::string inline_string_decode(std::string_view input) {
 	std::string output;
 	output.reserve(input.size());
 	for (size_t i = 0; i < input.size(); ++i) {
 		if (input[i] != '#' || i + 2 > input.size())
 			output += input[i];
 		else {
-			output += (char)strtol(input.substr(i + 1, 2).c_str(), nullptr, 16);
+			output += (char)strtol(std::string(input.substr(i + 1, 2)).c_str(), nullptr, 16);
 			i += 2;
 		}
 	}

@@ -60,21 +60,23 @@ Path::Path() {
 	FillPlatformSpecificPaths();
 }
 
-fs::path Path::Decode(std::string const& path) const {
+std::filesystem::path Path::Decode(std::string const& path) const {
 	int idx = find_token(path.c_str(), path.size());
 	if (idx == -1 || paths[idx].empty())
-		return fs::path(path).make_preferred();
-	return (paths[idx]/path.substr(strlen(tokens[idx]))).make_preferred();
+		return std::filesystem::path(path).make_preferred();
+    auto newpath = paths[idx];
+    newpath += path.substr(strlen(tokens[idx]));
+	return newpath.make_preferred();
 }
 
-fs::path Path::MakeRelative(fs::path const& path, std::string const& token) const {
+std::filesystem::path Path::MakeRelative(std::filesystem::path const& path, std::string const& token) const {
 	int idx = find_token(token.c_str(), token.size());
 	if (idx == -1) throw agi::InternalError("Bad token: " + token);
 
 	return MakeRelative(path, paths[idx]);
 }
 
-fs::path Path::MakeRelative(fs::path const& path, fs::path const& base) const {
+std::filesystem::path Path::MakeRelative(std::filesystem::path const& path, std::filesystem::path const& base) const {
 	if (path.empty() || base.empty()) return path;
 
 	const auto str = path.string();
@@ -89,7 +91,7 @@ fs::path Path::MakeRelative(fs::path const& path, fs::path const& base) const {
 	auto ref_it = base.begin();
 	for (; path_it != path.end() && ref_it != base.end() && *path_it == *ref_it; ++path_it, ++ref_it) ;
 
-	agi::fs::path result;
+	std::filesystem::path result;
 	for (; ref_it != base.end(); ++ref_it)
 		result /= "..";
 	for (; path_it != path.end(); ++path_it)
@@ -98,7 +100,7 @@ fs::path Path::MakeRelative(fs::path const& path, fs::path const& base) const {
 	return result;
 }
 
-fs::path Path::MakeAbsolute(fs::path path, std::string const& token) const {
+std::filesystem::path Path::MakeAbsolute(std::filesystem::path path, std::string const& token) const {
 	if (path.empty()) return path;
 	int idx = find_token(token.c_str(), token.size());
 	if (idx == -1) throw agi::InternalError("Bad token: " + token);
@@ -110,7 +112,7 @@ fs::path Path::MakeAbsolute(fs::path path, std::string const& token) const {
 	return (paths[idx].empty() || path.is_absolute()) ? path : paths[idx]/path;
 }
 
-std::string Path::Encode(fs::path const& path) const {
+std::string Path::Encode(std::filesystem::path const& path) const {
 	// Find the shortest encoding of path made relative to each token
 	std::string shortest = path.string();
 	size_t length = boost::distance(path);
@@ -128,7 +130,7 @@ std::string Path::Encode(fs::path const& path) const {
 	return shortest;
 }
 
-void Path::SetToken(const char *token_name, fs::path const& token_value) {
+void Path::SetToken(const char *token_name, std::filesystem::path const& token_value) {
 	int idx = find_token(token_name, strlen(token_name));
 	if (idx == -1) throw agi::InternalError("Bad token: " + std::string(token_name));
 
@@ -139,7 +141,7 @@ void Path::SetToken(const char *token_name, fs::path const& token_value) {
 	else {
 		paths[idx] = token_value;
 		paths[idx].make_preferred();
-		if (fs::FileExists(paths[idx]))
+		if (std::filesystem::is_regular_file(paths[idx]))
 			paths[idx] = paths[idx].parent_path();
 	}
 }

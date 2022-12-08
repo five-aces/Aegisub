@@ -19,6 +19,7 @@
 
 #include <libaegisub/format.h>
 #include <libaegisub/format_path.h>
+#include <filesystem>
 
 TEST(lagi_format, s) {
 	EXPECT_EQ("hello", agi::format("%s", "hello"));
@@ -135,6 +136,6 @@ TEST(lagi_format, wchar_t) {
 }
 
 TEST(lagi_format, path) {
-	EXPECT_EQ("/usr/bin", agi::format("%s", agi::fs::path("/usr/bin")));
-	EXPECT_EQ(L"/usr/bin", agi::format(L"%s", agi::fs::path("/usr/bin")));
+	EXPECT_EQ("/usr/bin", agi::format("%s", std::filesystem::path("/usr/bin")));
+	EXPECT_EQ(L"/usr/bin", agi::format(L"%s", std::filesystem::path("/usr/bin")));
 }

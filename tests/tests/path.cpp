@@ -19,6 +19,7 @@
 #include <main.h>
 
 #include <boost/filesystem.hpp>
+#include <filesystem>
 
 using agi::Path;
 
@@ -62,12 +63,12 @@ TEST(lagi_path, empty_path_clears_token) {
 TEST(lagi_path, decode_sets_uses_right_slashes) {
 	Path p;
 
-	agi::fs::path expected = boost::filesystem::current_path()/"foo/bar.txt";
+	std::filesystem::path expected = boost::filesystem::current_path()/"foo/bar.txt";
 	expected.make_preferred();
 
 	EXPECT_NO_THROW(p.SetToken("?video", boost::filesystem::current_path()));
 
-	agi::fs::path decoded;
+	std::filesystem::path decoded;
 	ASSERT_NO_THROW(decoded = p.Decode("?video/foo/bar.txt"));
 	EXPECT_STREQ(expected.string().c_str(), decoded.string().c_str());
 }
@@ -75,12 +76,12 @@ TEST(lagi_path, decode_sets_uses_right_slashes) {
 TEST(lagi_path, trailing_slash_on_token_is_optional) {
 	Path p;
 
-	agi::fs::path expected = boost::filesystem::current_path()/"foo.txt";
+	std::filesystem::path expected = boost::filesystem::current_path()/"foo.txt";
 	expected.make_preferred();
 
 	EXPECT_NO_THROW(p.SetToken("?audio", boost::filesystem::current_path()));
 
-	agi::fs::path decoded;
+	std::filesystem::path decoded;
 	ASSERT_NO_THROW(decoded = p.Decode("?audiofoo.txt"));
 	EXPECT_STREQ(expected.string().c_str(), decoded.string().c_str());
 
@@ -91,7 +92,7 @@ TEST(lagi_path, trailing_slash_on_token_is_optional) {
 TEST(lagi_path, setting_token_to_file_sets_to_parent_directory_instead) {
 	Path p;
 
-	agi::fs::path file = boost::filesystem::system_complete("data/file");
+	std::filesystem::path file = boost::filesystem::system_complete("data/file");
 	ASSERT_NO_THROW(p.SetToken("?script", file));
 	EXPECT_STREQ(file.parent_path().string().c_str(), p.Decode("?script").string().c_str());
 
@@ -115,7 +116,7 @@ TEST(lagi_path, valid_token_names) {
 
 #define TEST_PLATFORM_PATH_TOKEN(tok) \
 	do { \
-		agi::fs::path d; \
+		std::filesystem::path d; \
 		ASSERT_NO_THROW(d = p.Decode(tok)); \
 		ASSERT_FALSE(d.empty()); \
 		ASSERT_STRNE(tok, d.string().c_str()); \

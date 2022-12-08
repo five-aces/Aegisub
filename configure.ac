@@ -144,7 +144,7 @@ AS_IF([test x$enable_compiler_flags != xno], [
   CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wno-unused-parameter -fno-strict-aliasing"
 
   # For mac compiler which still stuck on c++98
-  AC_CXX_FLAG([-std=c++11])
+  AC_CXX_FLAG([-std=c++17])
 
   # -O* messes with debugging.
   AS_IF([test x$enable_debug = xyes], [

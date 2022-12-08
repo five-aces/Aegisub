@@ -38,10 +38,10 @@
 #include <libaegisub/fs.h>
 #include <libaegisub/log.h>
 #include <libaegisub/path.h>
-#include <libaegisub/make_unique.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <mutex>
+#include <filesystem>
 
 #ifdef _WIN32
 #include <vfw.h>
@@ -67,11 +67,11 @@ class AvisynthVideoProvider: public VideoProvider {
 	PClip RGB32Video;
 	VideoInfo vi;
 
-	AVSValue Open(agi::fs::path const& filename);
+	AVSValue Open(std::filesystem::path const& filename);
 	void Init(std::string const& matrix);
 
 public:
-	AvisynthVideoProvider(agi::fs::path const& filename, std::string const& colormatrix);
+	AvisynthVideoProvider(std::filesystem::path const& filename, std::string const& colormatrix);
 
 	void GetFrame(int n, VideoFrame &frame) override;
 
@@ -93,7 +93,7 @@ public:
 	bool HasAudio() const override                 { return has_audio; }
 };
 
-AvisynthVideoProvider::AvisynthVideoProvider(agi::fs::path const& filename, std::string const& colormatrix) try {
+AvisynthVideoProvider::AvisynthVideoProvider(std::filesystem::path const& filename, std::string const& colormatrix) try {
 	agi::acs::CheckFileRead(filename);
 
 	std::lock_guard<std::mutex> lock(avs.GetMutex());
@@ -213,7 +213,7 @@ void AvisynthVideoProvider::Init(std::string const& colormatrix) {
 	fps = (double)vi.fps_numerator / vi.fps_denominator;
 }
 
-AVSValue AvisynthVideoProvider::Open(agi::fs::path const& filename) {
+AVSValue AvisynthVideoProvider::Open(std::filesystem::path const& filename) {
 	IScriptEnvironment *env = avs.GetEnv();
 	char *videoFilename = env->SaveString(agi::fs::ShortName(filename).c_str());
 
@@ -279,7 +279,7 @@ AVSValue AvisynthVideoProvider::Open(agi::fs::path const& filename) {
 	// Try loading DirectShowSource2
 	if (!env->FunctionExists("dss2")) {
 		auto dss2path(config::path->Decode("?data/avss.dll"));
-		if (agi::fs::FileExists(dss2path))
+		if (std::filesystem::is_regular_file(dss2path))
 			env->Invoke("LoadPlugin", env->SaveString(agi::fs::ShortName(dss2path).c_str()));
 	}
 
@@ -293,7 +293,7 @@ AVSValue AvisynthVideoProvider::Open(agi::fs::path const& filename) {
 	// Try DirectShowSource
 	// Load DirectShowSource.dll from app dir if it exists
 	auto dsspath(config::path->Decode("?data/DirectShowSource.dll"));
-	if (agi::fs::FileExists(dsspath))
+	if (std::filesystem::is_regular_file(dsspath))
 		env->Invoke("LoadPlugin", env->SaveString(agi::fs::ShortName(dsspath).c_str()));
 
 	// Then try using DSS
@@ -325,7 +325,7 @@ void AvisynthVideoProvider::GetFrame(int n, VideoFrame &out) {
 }
 
 namespace agi { class BackgroundRunner; }
-std::unique_ptr<VideoProvider> CreateAvisynthVideoProvider(agi::fs::path const& path, std::string const& colormatrix, agi::BackgroundRunner *) {
-	return agi::make_unique<AvisynthVideoProvider>(path, colormatrix);
+std::unique_ptr<VideoProvider> CreateAvisynthVideoProvider(std::filesystem::path const& path, std::string const& colormatrix, agi::BackgroundRunner *) {
+	return std::make_unique<AvisynthVideoProvider>(path, colormatrix);
 }
 #endif // HAVE_AVISYNTH

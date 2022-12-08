@@ -265,7 +265,7 @@ namespace {
 	}
 } // namespace {
 
-namespace agi { namespace charset {
+namespace agi::charset {
 Iconv::Iconv() : cd(iconv_invalid) { }
 
 Iconv::Iconv(const char *source, const char *dest)
@@ -424,5 +424,4 @@ bool IsConversionSupported(const char *src, const char *dst) {
 	return supported;
 }
 
-	}
 }

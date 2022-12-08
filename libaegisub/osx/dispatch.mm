@@ -85,7 +85,7 @@ struct GCDQueue final : OSXQueue {
 };
 }
 
-namespace agi { namespace dispatch {
+namespace agi::dispatch {
 void Init(std::function<void (Thunk)> invoke_main) {
     ::invoke_main = std::move(invoke_main);
 }
@@ -107,4 +107,4 @@ std::unique_ptr<Queue> Create() {
     return std::unique_ptr<Queue>(new GCDQueue(dispatch_queue_create("Aegisub worker queue",
                                                                      DISPATCH_QUEUE_SERIAL)));
 }
-} }
+}

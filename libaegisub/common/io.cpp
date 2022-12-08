@@ -21,19 +21,16 @@
 #include <libaegisub/access.h>
 #include "libaegisub/fs.h"
 #include "libaegisub/log.h"
-#include "libaegisub/make_unique.h"
 #include "libaegisub/util.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <fstream>
 
-namespace agi {
-	namespace io {
+namespace agi::io {
 
-std::unique_ptr<std::istream> Open(fs::path const& file, bool binary) {
+std::unique_ptr<std::istream> Open(std::filesystem::path const& file, bool binary) {
 	LOG_D("agi/io/open/file") << file;
 
-	auto stream = agi::make_unique<boost::filesystem::ifstream>(file, (binary ? std::ios::binary : std::ios::in));
+	auto stream = std::make_unique<std::ifstream>(file.string(), (binary ? std::ios::binary : std::ios::in));
 	if (stream->fail()) {
 		acs::CheckFileRead(file);
 		throw IOFatal("Unknown fatal error occurred opening " + file.string());
@@ -42,13 +39,13 @@ std::unique_ptr<std::istream> Open(fs::path const& file, bool binary) {
 	return std::unique_ptr<std::istream>(stream.release());
 }
 
-Save::Save(fs::path const& file, bool binary)
+Save::Save(std::filesystem::path const& file, bool binary)
 : file_name(file)
-, tmp_name(unique_path(file.parent_path()/(file.stem().string() + "_tmp_%%%%" + file.extension().string())))
+, tmp_name(file.parent_path()/(file.stem().string() + "_tmp_" + util::gen_random(6) + file.extension().string()))
 {
 	LOG_D("agi/io/save/file") << file;
 
-	fp = agi::make_unique<boost::filesystem::ofstream>(tmp_name, binary ? std::ios::binary : std::ios::out);
+	fp = std::make_unique<std::ofstream>(tmp_name, binary ? std::ios::binary : std::ios::out);
 	if (!fp->good()) {
 		acs::CheckDirWrite(file.parent_path());
 		acs::CheckFileWrite(file);
@@ -61,10 +58,10 @@ void Save::Close() {
 	fp.reset(); // Need to close before rename on Windows to unlock the file
 	for (int i = 0; i < 10; ++i) {
 		try {
-			fs::Rename(tmp_name, file_name);
+			std::filesystem::rename(tmp_name, file_name);
 			return;
 		}
-		catch (agi::fs::FileSystemError const&) {
+		catch (std::filesystem::filesystem_error const&) {
 			// Retry up to ten times in case it's just locked by a poorly-written antivirus scanner
 			if (i == 9)
 				throw;
@@ -77,8 +74,7 @@ Save::~Save() {
 	try {
 		Close();
 	}
-	catch (agi::fs::FileSystemError const&) {}
+	catch (std::filesystem::filesystem_error const&) {}
 }
 
-	} // namespace io
-} // namespace agi
+} // namespace agi::io

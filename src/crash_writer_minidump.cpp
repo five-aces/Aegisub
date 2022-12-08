@@ -20,7 +20,6 @@
 
 #include <libaegisub/format.h>
 #include <libaegisub/fs.h>
-#include <libaegisub/make_unique.h>
 #include <libaegisub/util.h>
 
 #include <atomic>
@@ -36,7 +35,7 @@ extern EXCEPTION_POINTERS *wxGlobalSEInformation;
 
 namespace {
 wchar_t crash_dump_path[MAX_PATH];
-agi::fs::path crashlog_path;
+std::filesystem::path crashlog_path;
 
 using MiniDumpWriteDump = BOOL(WINAPI *)(
 	HANDLE hProcess,
@@ -102,11 +101,11 @@ std::unique_ptr<dump_thread_state> dump_thread;
 }
 
 namespace crash_writer {
-void Initialize(agi::fs::path const& path) {
+void Initialize(std::filesystem::path const& path) {
 	crashlog_path = path / "crashlog.txt";
 
 	auto dump_path = path / "crashdumps";
-	agi::fs::CreateDirectory(dump_path);
+	std::filesystem::create_directories(dump_path);
 
 	const auto path_str = (dump_path / GetVersionNumber()).wstring();
 	wcscpy_s(crash_dump_path, path_str.c_str());
@@ -121,7 +120,7 @@ void Initialize(agi::fs::path const& path) {
 	wcscpy_s(crash_dump_path + len, MAX_PATH - len, L".dmp");
 
 	if (!dump_thread)
-		dump_thread = agi::make_unique<dump_thread_state>();
+		dump_thread = std::make_unique<dump_thread_state>();
 }
 
 void Cleanup() {

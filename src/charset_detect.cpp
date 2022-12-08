@@ -45,7 +45,7 @@
 
 namespace CharSetDetect {
 
-std::string GetEncoding(agi::fs::path const& filename) {
+std::string GetEncoding(std::filesystem::path const& filename) {
 	auto encoding = agi::charset::Detect(filename);
 	if (!encoding.empty())
 		return encoding;

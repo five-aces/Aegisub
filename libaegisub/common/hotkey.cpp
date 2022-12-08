@@ -24,7 +24,7 @@
 #include <boost/range/algorithm/equal_range.hpp>
 #include <tuple>
 
-namespace agi { namespace hotkey {
+namespace agi::hotkey {
 namespace {
 struct combo_cmp {
 	bool operator()(const Combo *a, const Combo *b) {
@@ -85,7 +85,7 @@ struct hotkey_visitor : json::ConstVisitor {
 };
 }
 
-Hotkey::Hotkey(fs::path const& file, std::pair<const char *, size_t> default_config)
+Hotkey::Hotkey(std::filesystem::path const& file, std::pair<const char *, size_t> default_config)
 : config_file(file)
 {
 	LOG_D("hotkey/init") << "Generating hotkeys.";
@@ -187,8 +187,8 @@ void Hotkey::Flush() {
 		combo_array.push_back(keys);
 	}
 
-	if (backup_config_file && fs::FileExists(config_file) && !fs::FileExists(config_file.string() + ".3_1"))
-		fs::Copy(config_file, config_file.string() + ".3_1");
+	if (backup_config_file && std::filesystem::is_regular_file(config_file) && !std::filesystem::is_regular_file(config_file.string() + ".3_1"))
+        fs::Copy(config_file, config_file.string() + ".3_1");
 
 	io::Save file(config_file);
 	JsonWriter::Write(root, file.Get());
@@ -210,4 +210,4 @@ void Hotkey::SetHotkeyMap(HotkeyMap new_map) {
 	HotkeysChanged();
 }
 
-} }
+}

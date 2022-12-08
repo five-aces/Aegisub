@@ -21,15 +21,12 @@
 #include <libaegisub/path.h>
 
 #include <libaegisub/exception.h>
-#include <libaegisub/make_unique.h>
-
-#include <boost/filesystem.hpp>
 
 #include <Shlobj.h>
 #include <Shellapi.h>
 
 namespace {
-agi::fs::path WinGetFolderPath(int folder) {
+std::filesystem::path WinGetFolderPath(int folder) {
 	wchar_t path[MAX_PATH+1] = {0};
 	if (FAILED(SHGetFolderPathW(0, folder, 0, 0, path)))
 		throw agi::EnvironmentError("SHGetFolderPath failed. This should not happen.");
@@ -40,7 +37,7 @@ agi::fs::path WinGetFolderPath(int folder) {
 namespace agi {
 
 void Path::FillPlatformSpecificPaths() {
-	SetToken("?temp", boost::filesystem::temp_directory_path());
+	SetToken("?temp", std::filesystem::temp_directory_path());
 
 	SetToken("?user", WinGetFolderPath(CSIDL_APPDATA)/"Aegisub");
 	SetToken("?local", WinGetFolderPath(CSIDL_LOCAL_APPDATA)/"Aegisub");

@@ -19,7 +19,7 @@
 
 struct tm;
 
-namespace agi { namespace util {
+namespace agi::util {
 	/// Clamp `b` to the range [`a`,`c`]
 	template<typename T>
 	static inline T mid(T a, T b, T c) {
@@ -34,6 +34,17 @@ namespace agi { namespace util {
 	/// @param tmptr Time to format, or nullptr for current time
 	/// @return The strftime-formatted string
 	std::string strftime(const char *fmt, const tm *tmptr = nullptr);
+
+    /// Generate a random string of characters. Used to replace boost::make_unique.
+    std::string gen_random(const int len);
+
+    /*bool starts_with();
+
+     bool istarts_with();
+
+     bool ends_with();
+
+     bool iends_with();*/
 
 	/// Case-insensitive find with proper case folding
 	/// @param haystack String to search
@@ -81,4 +92,4 @@ namespace agi { namespace util {
 	auto range(Integer end) -> decltype(boost::irange<Integer>(0, end)) {
 		return boost::irange<Integer>(0, end);
 	}
-} } // namespace agi::util
+} // namespace agi::util

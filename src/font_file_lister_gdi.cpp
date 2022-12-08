@@ -62,10 +62,10 @@ uint32_t murmur3(const char *data, uint32_t len) {
 	return hash;
 }
 
-std::vector<agi::fs::path> get_installed_fonts() {
+std::vector<std::filesystem::path> get_installed_fonts() {
 	static const auto fonts_key_name = L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
 
-	std::vector<agi::fs::path> files;
+	std::vector<std::filesystem::path> files;
 
 	for (HKEY hKey : { HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE }) {
 		HKEY key;
@@ -75,7 +75,7 @@ std::vector<agi::fs::path> get_installed_fonts() {
 
 		wchar_t fdir[MAX_PATH];
 		SHGetFolderPathW(NULL, CSIDL_FONTS, NULL, 0, fdir);
-		agi::fs::path font_dir(fdir);
+		std::filesystem::path font_dir(fdir);
 
 		for (DWORD i = 0;; ++i) {
 			WCHAR font_name[SHRT_MAX];
@@ -92,8 +92,8 @@ std::vector<agi::fs::path> get_installed_fonts() {
 			if (ret == ERROR_NO_MORE_ITEMS) break;
 			if (ret != ERROR_SUCCESS) continue;
 
-			agi::fs::path font_path(font_filename.data());
-			if (!agi::fs::FileExists(font_path) && agi::fs::FileExists(font_dir / font_path))
+			std::filesystem::path font_path(font_filename.data());
+			if (!std::filesystem::is_regular_file(font_path) && std::filesystem::is_regular_file(font_dir / font_path))
 				font_path = font_dir / font_path;
 			files.push_back(font_path);
 		}
@@ -102,7 +102,7 @@ std::vector<agi::fs::path> get_installed_fonts() {
 	return files;
 }
 
-using font_index = std::unordered_multimap<uint32_t, agi::fs::path>;
+using font_index = std::unordered_multimap<uint32_t, std::filesystem::path>;
 
 font_index index_fonts(FontCollectorStatusCallback &cb) {
 	font_index hash_to_path;

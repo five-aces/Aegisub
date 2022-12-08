@@ -51,10 +51,9 @@
 #include "video_controller.h"
 #include "visual_tool.h"
 
-#include <libaegisub/make_unique.h>
-
 #include <algorithm>
 #include <wx/combobox.h>
+#include <wx/sizer.h>
 #include <wx/menu.h>
 #include <wx/textctrl.h>
 #include <wx/toolbar.h>
@@ -91,7 +90,7 @@ VideoDisplay::VideoDisplay(wxToolBar *toolbar, bool freeSize, wxComboBox *zoomBo
 , toolBar(toolbar)
 , zoomBox(zoomBox)
 , freeSize(freeSize)
-, retina_helper(agi::make_unique<RetinaHelper>(this))
+, retina_helper(std::make_unique<RetinaHelper>(this))
 , scale_factor(retina_helper->GetScaleFactor())
 , scale_factor_connection(retina_helper->AddScaleFactorListener([=](int new_scale_factor) {
 	double new_zoom = zoomValue * new_scale_factor / scale_factor;
@@ -146,7 +145,7 @@ bool VideoDisplay::InitContext() {
 		return false;
 
 	if (!glContext)
-		glContext = agi::make_unique<wxGLContext>(this);
+		glContext = std::make_unique<wxGLContext>(this);
 
 	SetCurrent(*glContext);
 	return true;
@@ -175,7 +174,7 @@ void VideoDisplay::DoRender() try {
 		return;
 
 	if (!videoOut)
-		videoOut = agi::make_unique<VideoOutGL>();
+		videoOut = std::make_unique<VideoOutGL>();
 
 	if (!tool)
 		cmd::call("video/tool/cross", con);

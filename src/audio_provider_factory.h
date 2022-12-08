@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <vector>
+#include <filesystem>
 
 namespace agi {
 	class AudioProvider;
@@ -25,7 +26,7 @@ namespace agi {
 	class Path;
 }
 
-std::unique_ptr<agi::AudioProvider> GetAudioProvider(agi::fs::path const& filename,
+std::unique_ptr<agi::AudioProvider> GetAudioProvider(std::filesystem::path const& filename,
                                                      agi::Path const& path_helper,
                                                      agi::BackgroundRunner *br);
 std::vector<std::string> GetAudioProviderNames();

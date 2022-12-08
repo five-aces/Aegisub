@@ -20,14 +20,15 @@
 
 #include "libaegisub/file_mapping.h"
 #include "libaegisub/scoped_ptr.h"
+#include <filesystem>
 
 #ifdef WITH_UCHARDET
 #include <uchardet/uchardet.h>
 #include <boost/algorithm/string/case_conv.hpp>
 #endif
 
-namespace agi { namespace charset {
-std::string Detect(agi::fs::path const& file) {
+namespace agi::charset {
+std::string Detect(std::filesystem::path const& file) {
 	agi::read_file_mapping fp(file);
 
 	// FIXME: It is an empty file. Treat as ascii
@@ -114,4 +115,4 @@ std::string Detect(agi::fs::path const& file) {
 	return "utf-8";
 #endif
 }
-} }
+}

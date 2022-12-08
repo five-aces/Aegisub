@@ -130,7 +130,7 @@ int64_t v1_parse(line_iterator<std::string> file, std::string line, std::vector<
 }
 }
 
-namespace agi { namespace vfr {
+namespace agi::vfr {
 Framerate::Framerate(double fps)
 : denominator(default_denominator)
 , numerator(int64_t(fps * denominator))
@@ -171,7 +171,7 @@ Framerate::Framerate(std::initializer_list<int> timecodes)
 	SetFromTimecodes();
 }
 
-Framerate::Framerate(fs::path const& filename)
+Framerate::Framerate(std::filesystem::path const& filename)
 : denominator(default_denominator)
 {
 	auto file = agi::io::Open(filename);
@@ -192,7 +192,7 @@ Framerate::Framerate(fs::path const& filename)
 	throw UnknownFormat(line);
 }
 
-void Framerate::Save(fs::path const& filename, int length) const {
+void Framerate::Save(std::filesystem::path const& filename, int length) const {
 	agi::io::Save file(filename);
 	auto &out = file.Get();
 
@@ -321,4 +321,4 @@ int Framerate::TimeAtSmpte(int h, int m, int s, int f) const {
 	return TimeAtFrame(FrameAtSmpte(h, m, s, f));
 }
 
-} }
+}

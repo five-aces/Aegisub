@@ -21,8 +21,7 @@
 
 #include <memory>
 #include <string>
-
-#include <libaegisub/fs_fwd.h>
+#include <filesystem>
 
 namespace agi {
 	namespace charset { class IconvWrapper; }
@@ -39,7 +38,7 @@ class TextFileWriter {
 #endif
 
 public:
-	TextFileWriter(agi::fs::path const& filename, std::string encoding="");
+	TextFileWriter(std::filesystem::path const& filename, std::string encoding="");
 	~TextFileWriter();
 
 	void WriteLineToFile(std::string const& line, bool addLineBreak=true);

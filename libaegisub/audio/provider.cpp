@@ -16,10 +16,10 @@
 
 #include "libaegisub/audio/provider.h"
 
-#include "libaegisub/fs.h"
 #include "libaegisub/io.h"
 #include "libaegisub/log.h"
 #include "libaegisub/util.h"
+#include <filesystem>
 
 namespace {
 
@@ -208,7 +208,7 @@ class writer {
 	std::ostream& out;
 
 public:
-	writer(agi::fs::path const& filename) : outfile(filename, true), out(outfile.Get()) { }
+	writer(std::filesystem::path const& filename) : outfile(filename, true), out(outfile.Get()) { }
 
 	template<int N>
 	void write(const char(&str)[N]) {
@@ -227,7 +227,7 @@ public:
 };
 }
 
-void SaveAudioClip(AudioProvider const& provider, fs::path const& path, int start_time, int end_time) {
+void SaveAudioClip(AudioProvider const& provider, std::filesystem::path const& path, int start_time, int end_time) {
 	const auto max_samples = provider.GetNumSamples();
 	const auto start_sample = std::min(max_samples, ((int64_t)start_time * provider.GetSampleRate() + 999) / 1000);
 	const auto end_sample = util::mid(start_sample, ((int64_t)end_time * provider.GetSampleRate() + 999) / 1000, max_samples);

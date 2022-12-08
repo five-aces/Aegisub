@@ -90,6 +90,22 @@ std::string strftime(const char *fmt, const tm *tmptr) {
 	return buff;
 }
 
+std::string gen_random(const int len) { //Credit to Ates Goral on StackOverflow
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    std::string tmp_s;
+    tmp_s.reserve(len);
+    srand((unsigned)time(NULL) * getpid());
+    
+    for (int i = 0; i < len; ++i) {
+        tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+    }
+    
+    return tmp_s;
+}
+
 std::pair<size_t, size_t> ifind(std::string const& haystack, std::string const& needle) {
 	const auto folded_hs = boost::locale::fold_case(haystack);
 	const auto folded_n = boost::locale::fold_case(needle);

@@ -25,7 +25,6 @@
 #include <libaegisub/line_iterator.h>
 #include <libaegisub/log.h>
 #include <libaegisub/path.h>
-#include <libaegisub/make_unique.h>
 
 #include <boost/range/algorithm.hpp>
 
@@ -99,7 +98,7 @@ void HunspellSpellChecker::ReadUserDictionary() {
 
 void HunspellSpellChecker::WriteUserDictionary() {
 	// Ensure that the path exists
-	agi::fs::CreateDirectory(userDicPath.parent_path());
+	std::filesystem::create_directories(userDicPath.parent_path());
 
 	// Write the new dictionary
 	{
@@ -160,10 +159,10 @@ std::vector<std::string> HunspellSpellChecker::GetLanguageList() {
 	return languages;
 }
 
-static bool check_path(agi::fs::path const& path, std::string const& language, agi::fs::path& aff, agi::fs::path& dic) {
+static bool check_path(std::filesystem::path const& path, std::string const& language, std::filesystem::path& aff, std::filesystem::path& dic) {
 	aff = path/agi::format("%s.aff", language);
 	dic = path/agi::format("%s.dic", language);
-	return agi::fs::FileExists(aff) && agi::fs::FileExists(dic);
+	return std::filesystem::is_regular_file(aff) && std::filesystem::is_regular_file(dic);
 }
 
 void HunspellSpellChecker::OnLanguageChanged() {
@@ -172,7 +171,7 @@ void HunspellSpellChecker::OnLanguageChanged() {
 	auto language = OPT_GET("Tool/Spell Checker/Language")->GetString();
 	if (language.empty()) return;
 
-	agi::fs::path aff, dic;
+	std::filesystem::path aff, dic;
 	auto path = config::path->Decode(OPT_GET("Path/Dictionary")->GetString() + "/");
 	if (!check_path(path, language, aff, dic)) {
 		path = config::path->Decode("?dictionary/");
@@ -184,14 +183,14 @@ void HunspellSpellChecker::OnLanguageChanged() {
 
 #ifdef _WIN32
 	// The prefix makes hunspell assume the paths are UTF-8 and use _wfopen
-	hunspell = agi::make_unique<Hunspell>(("\\\\?\\" + aff.string()).c_str(), ("\\\\?\\" + dic.string()).c_str());
+	hunspell = std::make_unique<Hunspell>(("\\\\?\\" + aff.string()).c_str(), ("\\\\?\\" + dic.string()).c_str());
 #else
-	hunspell = agi::make_unique<Hunspell>(aff.string().c_str(), dic.string().c_str());
+	hunspell = std::make_unique<Hunspell>(aff.string().c_str(), dic.string().c_str());
 #endif
 	if (!hunspell) return;
 
-	conv = agi::make_unique<agi::charset::IconvWrapper>("utf-8", hunspell->get_dic_encoding());
-	rconv = agi::make_unique<agi::charset::IconvWrapper>(hunspell->get_dic_encoding(), "utf-8");
+	conv = std::make_unique<agi::charset::IconvWrapper>("utf-8", hunspell->get_dic_encoding());
+	rconv = std::make_unique<agi::charset::IconvWrapper>(hunspell->get_dic_encoding(), "utf-8");
 
 	userDicPath = config::path->Decode("?user/dictionaries")/agi::format("user_%s.dic", language);
 	ReadUserDictionary();
