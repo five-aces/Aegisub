@@ -36,12 +36,10 @@
 
 #include <libaegisub/background_runner.h>
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 #include <libaegisub/signal.h>
 
 #include "ass_export_filter.h"
 
-#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <vector>
 #include <filesystem>

@@ -36,7 +36,6 @@
 
 #include <libaegisub/audio/provider.h>
 #include <libaegisub/log.h>
-#include <libaegisub/make_unique.h>
 
 namespace {
 class CoreAudioPlayer final : public AudioPlayer {
@@ -209,7 +208,7 @@ void CoreAudioPlayer::SetEndPosition(int64_t pos)
 
 std::unique_ptr<AudioPlayer> CreateCoreAudioPlayer(agi::AudioProvider *provider, wxWindow *)
 {
-    return agi::make_unique<CoreAudioPlayer>(provider);
+    return std::make_unique<CoreAudioPlayer>(provider);
 }
 
 #endif // WITH_COREAUDIO

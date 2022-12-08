@@ -32,8 +32,6 @@
 /// @ingroup export
 ///
 
-#include <libaegisub/fs_fwd.h>
-
 #include <map>
 #include <string>
 #include <vector>

@@ -24,7 +24,6 @@
 
 #include <libaegisub/signal.h>
 
-#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <set>
 #include <filesystem>

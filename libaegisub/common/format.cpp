@@ -17,9 +17,6 @@
 #include <libaegisub/format.h>
 
 #include <libaegisub/charset_conv.h>
-#include <libaegisub/fs_fwd.h>
-
-#include <boost/filesystem/path.hpp>
 
 #ifdef _MSC_VER
 #define WCHAR_T_ENC "utf-16le"

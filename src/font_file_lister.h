@@ -16,7 +16,6 @@
 
 #include <libaegisub/scoped_ptr.h>
 
-#include <boost/filesystem/path.hpp>
 #include <functional>
 #include <map>
 #include <string>

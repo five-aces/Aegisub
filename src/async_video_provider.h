@@ -17,7 +17,6 @@
 #include "include/aegisub/video_provider.h"
 
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 
 #include <atomic>
 #include <memory>

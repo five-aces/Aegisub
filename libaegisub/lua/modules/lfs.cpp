@@ -18,7 +18,6 @@
 #include "libaegisub/lua/ffi.h"
 
 #include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <filesystem>
 
 using namespace agi::fs;

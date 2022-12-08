@@ -29,7 +29,6 @@
 
 #include "ass_entry.h"
 
-#include <libaegisub/fs_fwd.h>
 #include <libaegisub/signal.h>
 
 #include <boost/intrusive/list.hpp>

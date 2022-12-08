@@ -17,7 +17,6 @@
 #include <libaegisub/signal.h>
 
 #include <boost/container/list.hpp>
-#include <boost/filesystem/path.hpp>
 #include <wx/timer.h>
 #include <filesystem>
 

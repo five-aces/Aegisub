@@ -19,10 +19,8 @@
 #include "libaegisub/fs.h"
 #include "libaegisub/util.h"
 
-#include <boost/filesystem/path.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <limits>
-#include <filesystem>
 
 #ifdef _WIN32
 #include <Windows.h>

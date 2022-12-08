@@ -17,7 +17,6 @@
 #include <libaegisub/signal.h>
 #include <libaegisub/vfr.h>
 
-#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <vector>
 #include <filesystem>

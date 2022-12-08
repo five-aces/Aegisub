@@ -17,7 +17,6 @@
 #include <vector>
 #include <filesystem>
 
-#include <libaegisub/fs_fwd.h>
 #include <libaegisub/signal.h>
 
 namespace json {

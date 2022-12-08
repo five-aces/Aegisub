@@ -30,7 +30,6 @@
 #pragma once
 
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 
 #include <string>
 #include <vector>

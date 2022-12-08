@@ -40,7 +40,6 @@
 #include <libaegisub/cajun/reader.h>
 #include <libaegisub/cajun/writer.h>
 
-#include <boost/filesystem/path.hpp>
 #include <wx/dialog.h>
 #include <wx/listbox.h>
 #include <wx/radiobox.h>

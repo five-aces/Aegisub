@@ -15,9 +15,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 
-#include <boost/filesystem/path.hpp>
 #include <cstdint>
 #include <ctime>
 #include <iterator>
@@ -29,8 +27,10 @@
 #undef CreateDirectory
 
 namespace agi::fs {
+using path = std::filesystem::path;
+
     /// Define a filesystem error which takes a path or a string
-    #define DEFINE_FS_EXCEPTION(type, base, message) \
+#define DEFINE_FS_EXCEPTION(type, base, message) \
     struct type : public base { \
         type(path const& p) : base(message + p.string()) { } \
         type(std::string const& s) : base(s) { } \
@@ -80,67 +80,67 @@ namespace agi::fs {
     /// File exists and cannot be overwritten due to being read-only
     DEFINE_FS_EXCEPTION(ReadOnlyFile, WriteDenied, "File is read-only: ");
 
-    bool Exists(std::filesystem::path const& p);
-    bool FileExists(std::filesystem::path const& file);
-    bool DirectoryExists(std::filesystem::path const& dir);
+    bool Exists(path const& p);
+    bool FileExists(path const& file);
+    bool DirectoryExists(path const& dir);
 
     /// Get the local-charset encoded shortname for a file
     ///
     /// This is purely for compatibility with external libraries which do
     /// not support unicode filenames on Windows. On all other platforms,
     /// it is a no-op.
-    std::string ShortName(std::filesystem::path const& file_path);
+    std::string ShortName(path const& file_path);
 
     /// Check for amount of free space on a path
-    uintmax_t FreeSpace(std::filesystem::path const& dir_path);
+    uintmax_t FreeSpace(path const& dir_path);
 
     /// Get the size in bytes of the file at path
     ///
     /// @throws agi::FileNotFound if path does not exist
     /// @throws agi::acs::NotAFile if path is a directory
     /// @throws agi::acs::Read if path exists but could not be read
-    uintmax_t Size(std::filesystem::path const& file_path);
+    uintmax_t Size(path const& file_path);
 
     /// Get the modification time of the file at path
     ///
     /// @throws agi::FileNotFound if path does not exist
     /// @throws agi::acs::NotAFile if path is a directory
     /// @throws agi::acs::Read if path exists but could not be read
-    std::time_t ModifiedTime(std::filesystem::path const& file_path);
+    std::time_t ModifiedTime(path const& file_path);
 
     /// Create a directory and all required intermediate directories
     /// @throws agi::acs::Write if the directory could not be created.
     ///
     /// Trying to create a directory which already exists is not an error.
-    bool CreateDirectory(std::filesystem::path const& dir_path);
+    bool CreateDirectory(path const& dir_path);
 
     /// Touch the given path
     ///
     /// Creates the file if it does not exist, or updates the modified
     /// time if it does
-    void Touch(std::filesystem::path const& file_path);
+    void Touch(path const& file_path);
 
     /// Rename a file or directory
     /// @param from Source path
     /// @param to   Destination path
-    void Rename(std::filesystem::path const& from, std::filesystem::path const& to);
+    void Rename(path const& from, path const& to);
 
     /// Copy a file
     /// @param from Source path
     /// @param to   Destination path
     ///
     /// The destination path will be created if it does not exist.
-    void Copy(std::filesystem::path const& from, std::filesystem::path const& to);
+    void Copy(path const& from, path const& to);
 
     /// Delete a file
     /// @param path Path to file to delete
     /// @throws agi::FileNotAccessibleError if file exists but could not be deleted
-    bool Remove(std::filesystem::path const& file);
+    bool Remove(path const& file);
 
     /// Check if the file has the given extension
     /// @param p Path to check
     /// @param ext Case-insensitive extension, without leading dot
-    bool HasExtension(std::filesystem::path const& p, std::string_view ext);
+    bool HasExtension(path const& p, std::string_view ext);
 
     std::filesystem::path Canonicalize(std::filesystem::path const& path);
 
@@ -149,9 +149,9 @@ namespace agi::fs {
         std::shared_ptr<PrivData> privdata;
         std::string value;
     public:
-        typedef std::filesystem::path value_type;
-        typedef std::filesystem::path* pointer;
-        typedef std::filesystem::path& reference;
+        typedef path value_type;
+        typedef path* pointer;
+        typedef path& reference;
         typedef size_t difference_type;
         typedef std::forward_iterator_tag iterator_category;
 

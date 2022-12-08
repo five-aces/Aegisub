@@ -14,8 +14,6 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#include <libaegisub/fs_fwd.h>
-
 #include <boost/interprocess/detail/os_file_functions.hpp>
 #include <cstdint>
 #include <filesystem>

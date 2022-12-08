@@ -18,7 +18,6 @@
 #include <filesystem>
 
 #include <libaegisub/exception.h>
-#include <libaegisub/fs_fwd.h>
 
 namespace json {
 	class UnknownElement;

@@ -47,7 +47,6 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/crc.hpp>
-#include <boost/filesystem/path.hpp>
 #include <wx/intl.h>
 #include <wx/choicdlg.h>
 

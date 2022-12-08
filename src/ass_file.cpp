@@ -26,7 +26,6 @@
 #include <algorithm>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/path.hpp>
 #include <cassert>
 #include <unordered_map>
 #include <unordered_set>

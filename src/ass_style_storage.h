@@ -32,9 +32,6 @@
 /// @ingroup style_editor
 ///
 
-#include <libaegisub/fs_fwd.h>
-
-#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <string>
 #include <vector>

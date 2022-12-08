@@ -29,8 +29,6 @@
 
 #pragma once
 
-#include <libaegisub/fs_fwd.h>
-
 #include <cstdint>
 #include <string>
 #include <filesystem>
