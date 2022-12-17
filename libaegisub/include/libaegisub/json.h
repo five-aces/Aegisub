@@ -16,6 +16,8 @@
 /// @brief Parse JSON files and return json::UnknownElement
 /// @ingroup libaegisub io
 
+#pragma once
+
 #include <libaegisub/cajun/elements.h>
 #include <filesystem>
 

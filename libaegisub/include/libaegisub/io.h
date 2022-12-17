@@ -16,6 +16,8 @@
 /// @brief Public interface for IO methods.
 /// @ingroup libaegisub
 
+#pragma once
+
 #include <libaegisub/exception.h>
 
 #include <iosfwd>

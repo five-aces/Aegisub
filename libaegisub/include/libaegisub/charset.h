@@ -16,6 +16,8 @@
 /// @brief Character set detection and manipulation utilities.
 /// @ingroup libaegisub
 
+#pragma once
+
 #include <filesystem>
 #include <string>
 
