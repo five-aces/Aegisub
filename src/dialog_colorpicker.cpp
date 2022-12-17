@@ -234,9 +234,9 @@ public:
 };
 
 #ifdef WIN32
-#define STATIC_BORDER_FLAG wxSTATIC_BORDER
+#define STATIC_BORDER_FLAG wxBORDER_STATIC
 #else
-#define STATIC_BORDER_FLAG wxSIMPLE_BORDER
+#define STATIC_BORDER_FLAG wxBORDER_SIMPLE
 #endif
 
 wxDEFINE_EVENT(EVT_RECENT_SELECT, ValueEvent<agi::Color>);
@@ -606,9 +606,9 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, agi::Color initial_color,
 #endif
 	eyedropper_bitmap.SetMask(new wxMask(eyedropper_bitmap, wxColour(255, 0, 255)));
 #if wxCHECK_VERSION(3, 1, 0) && defined(__WXMAC__)
-	screen_dropper_icon = new wxGenericStaticBitmap(this, -1, eyedropper_bitmap, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
+	screen_dropper_icon = new wxGenericStaticBitmap(this, -1, eyedropper_bitmap, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED);
 #else
-	screen_dropper_icon = new wxStaticBitmap(this, -1, eyedropper_bitmap, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
+	screen_dropper_icon = new wxStaticBitmap(this, -1, eyedropper_bitmap, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED);
 #endif
 	screen_dropper = new ColorPickerScreenDropper(this, 7, 7, 8);
 

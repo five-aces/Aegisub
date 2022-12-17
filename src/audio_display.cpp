@@ -576,7 +576,7 @@ public:
 };
 
 AudioDisplay::AudioDisplay(wxWindow *parent, AudioController *controller, agi::Context *context)
-: wxWindow(parent, -1, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS|wxBORDER_SIMPLE)
+: wxWindow(parent, -1, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS | wxBORDER_SIMPLE)
 , audio_open_connection(context->project->AddAudioProviderListener(&AudioDisplay::OnAudioOpen, this))
 , context(context)
 , audio_renderer(std::make_unique<AudioRenderer>())

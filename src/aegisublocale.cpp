@@ -103,7 +103,7 @@ std::string AegisubLocale::PickLanguage() {
 	for (auto const& lang : langs)
 		langNames.push_back(LocalizedLanguageName(lang));
 
-	long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxOK | wxCENTRE;
+	long style = wxDEFAULT_DIALOG_STYLE | wxOK | wxCENTRE;
 	if (!active_language.empty())
 		style |= wxCANCEL;
 

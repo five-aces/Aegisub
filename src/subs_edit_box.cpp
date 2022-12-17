@@ -106,7 +106,7 @@ const auto AssDialogue_Effect = &AssDialogue::Effect;
 }
 
 SubsEditBox::SubsEditBox(wxWindow *parent, agi::Context *context)
-: wxPanel(parent, -1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxRAISED_BORDER, "SubsEditBox")
+: wxPanel(parent, -1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxBORDER_RAISED, "SubsEditBox")
 , c(context)
 , undo_timer(GetEventHandler())
 #ifdef WITH_WXSTC
